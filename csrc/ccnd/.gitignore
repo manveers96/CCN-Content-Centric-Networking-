@@ -1,0 +1,11 @@
+Makefile
+anything.ccnb
+ccnd
+ccnd-init-keystore-helper
+ccnd_built.sh
+ccnd_stregistry.h
+ccndsmoketest
+contentmishash.ccnb
+contentobjecthash.ccnb
+contentobjecthash.out
+minsuffix.ccnb

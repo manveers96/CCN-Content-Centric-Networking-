@@ -1,0 +1,38 @@
+<!-- DTD for CCNx Sync Protocol -->
+<!ENTITY % URI "CDATA">        <!-- a Uniform Resource Identifier -->
+<!ENTITY % commonattrs
+       "xmlns %URI; #FIXED 'http://www.ccnx.org/content/schema/20090915'">
+
+<!-- Items from ccnx.dtd -->
+<!ELEMENT Name              (Component*)>
+<!ELEMENT Component         (#PCDATA)>	<!-- base64Binary -->
+<!ATTLIST Component         ccnbencoding CDATA #FIXED 'base64Binary'>
+<!-- End of copied items -->
+
+<!ELEMENT SyncVersion        (#PCDATA)>      <!-- 20110614 -->
+<!ELEMENT SyncLeafCount      (#PCDATA)>      <!-- nonNegativeInteger -->
+<!ELEMENT SyncTreeDepth      (#PCDATA)>      <!-- nonNegativeInteger -->
+<!ELEMENT SyncByteCount      (#PCDATA)>      <!-- nonNegativeInteger -->
+
+<!ELEMENT SyncContentHash    (#PCDATA)>
+<!ATTLIST SyncContentHash    ccnbencoding CDATA #FIXED 'base64Binary'>
+
+<!ELEMENT SyncNodeKind       (#PCDATA)>      <!-- nonNegativeInteger -->
+
+<!ELEMENT SyncNodeElements   ((Name | SyncContentHash)*)>
+
+<!ELEMENT SyncNode           (SyncVersion, SyncNodeElements,
+                              SyncContentHash, Name, Name, SyncNodeKind,
+                              SyncLeafCount, SyncTreeDepth, SyncByteCount)>
+<!ATTLIST SyncNode           %commonattrs;>
+
+<!ELEMENT SyncNodeDeltas     (SyncVersion, Name*)>  <!-- 20120307 -->
+
+<!ATTLIST SyncNodeDeltas     %commonattrs;>
+
+<!ELEMENT SyncConfigSliceOp       (#PCDATA)>      <!-- 0 -->
+
+<!ELEMENT SyncConfigSliceList     ((SyncConfigSliceOp, Name)*)>
+
+<!ELEMENT SyncConfigSlice         (SyncVersion, Name, Name, SyncConfigSliceList)>
+<!ATTLIST SyncConfigSlice         %commonattrs;>

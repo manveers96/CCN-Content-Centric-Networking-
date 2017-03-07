@@ -1,0 +1,15 @@
+*.out
+!include
+00MANIFEST
+ccnd/anything.ccnb
+ccnd/Makefile
+ccnd/ccnd
+ccnd/ccnd_built.sh
+ccnd/ccnd-init-keystore-helper
+ccnd/ccndsmoketest
+ccnd/contentobjecthash.ccnb
+ccnd/contentobjecthash.out
+ccnd/contentmishash.ccnb
+ccnd/minsuffix.ccnb
+conf.mk
+conf/local.mk

@@ -1,0 +1,199 @@
+'\" t
+.\"     Title: ccnsyncslice
+.\"    Author: [see the "AUTHOR" section]
+.\" Generator: DocBook XSL Stylesheets v1.75.2 <http://docbook.sf.net/>
+.\"      Date: 01/10/2014
+.\"    Manual: \ \&
+.\"    Source: \ \& 0.8.2
+.\"  Language: English
+.\"
+.TH "CCNSYNCSLICE" "1" "01/10/2014" "\ \& 0\&.8\&.2" "\ \&"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+ccnsyncslice \- manipulate Sync configuration slices
+.SH "SYNOPSIS"
+.sp
+\fBccnsyncslice\fR \fB[\-hv]\fR (\fBcreate\fR|\fBdelete\fR) \fItopo prefix [clause]\&...\fR
+.SH "DESCRIPTION"
+.sp
+Sync is a CCNx facility that allows CCN components to define collections of named data in Repositories, and automatically keeps their contents in synchrony with identically defined collections residing in neighboring Repositories\&. Sync is currently embedded in the Repository, but will be available separately in the future\&.
+.sp
+Sync is started automatically when a Repository starts if the Repository configuration option, CCNS_ENABLE, is set to 1 (the default)\&. See ccnr(1) for more information about Repository configuration options\&.
+.sp
+Associated with each Repository, there is a Sync Agent that is responsible for keeping collections in the local repository up to date, and for responding to inquiries from remote Sync Agents for information about contents of collections known to it\&. To do this, it builds a sync tree for each collection defined in the local node\&. Eacb \fIsync tree\fR represents the content and organization of a particular collection, and is updated whenever content with a matching name is added to the Repository\&. The definition of a sync tree is contained in a \fIconfiguration slice\fR that is specified by an application in the local node\&.
+.sp
+Once a collection is defined, the Sync Agent automatically keeps it synchronized with collections in neighboring nodes (ccnd scope = 2) that are identically defined\&. The protocol for creating a new slice and the internal protocol used by Sync Agents for keeping collections in sync are described in CCNx Synchronization Protocols\&.
+.sp
+Sync currently has the following limitations:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Sync only works with the local C\-based Repo; it is not yet available for separate use\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Sync only works with neighbors (ccnd scoping = 2)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+The order in which names and content are synchronized is arbitrary\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+All versions are included (not just the last)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Content deletions are not well supported\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Applications must agree exactly on the definition of collections\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+ccnd must have compatible routing\&.
+.RE
+.sp
+ccnsyncslice is a tool for creating and deleting the Sync configuration slices in a repository\&.
+.SH "OPTIONS"
+.PP
+\fB\-h\fR
+.RS 4
+Print the usage message and exit\&.
+.RE
+.PP
+\fB\-v\fR
+.RS 4
+Be more verbose, reporting success as well as failure after an operation\&.
+.RE
+.SH "COMMANDS"
+.PP
+\fB(create|delete) \fR\fB\fItopo prefix [clause]\&...\fR\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+
+\fItopo\fR
+is the topological prefix used by Sync Agents for exchanging information about the collection\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+
+\fIprefix\fR
+is the common prefix for all names in the collection\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+
+\fI[clause]\&...\fR
+is zero or more optional filter clauses that limit the names in the collection\&. A filter
+\fIclause\fR
+is a CCNx URI representing a pattern in which a component consisting solely of %FF matches any single component\&. If the filter clause is omitted, all content names under
+\fIprefix\fR
+are included\&.
+.RE
+.RE
+.sp
+Creates, or deletes, a slice representing the content matching the prefix and filter clause parameters, communicated under the \fItopo\fR prefix\&. Deleting a slice does not delete the content described by the slice, it merely stops the local Sync agent from synchronizing the content described by the slice\&.
+.SH "EXIT STATUS"
+.PP
+\fB0\fR
+.RS 4
+Success
+.RE
+.PP
+\fB1\fR
+.RS 4
+Failure
+.RE
+.SH "AUTHOR"
+.sp
+Nick Briggs

@@ -1,0 +1,67 @@
+The vlc plugin code provided is known to work with the 0.9.9
+and later releases.
+
+In order to compile the vlc plugin you will need to install
+the vlc and libvlc-dev packages.  On Ubuntu Linux, for example,
+you can use:
+
+# apt-get install vlc libvlc-dev
+
+On Mac OS X, you have a choice of either using macports to install VLC:
+
+$ sudo port install VLC
+
+which as of VLC 1.0.6 will install the following additional packages:
+
+a52dec faad2 ffmpeg XviD dirac cppunit gmake lame libogg libsdl
+xorg-libXext xorg-libX11 xorg-bigreqsproto xorg-inputproto
+xorg-kbproto xorg-libXau xorg-xproto xorg-libXdmcp xorg-libxcb
+python27 db46 python_select python27 xorg-libpthread-stubs
+xorg-xcb-proto libxml2 libxml2 xorg-util-macros xorg-xcmiscproto
+xorg-xextproto xorg-xf86bigfontproto xorg-xtrans xorg-libXrandr
+xorg-randrproto xrender xorg-renderproto libtheora libvorbis libvpx
+yasm openjpeg jbigkit lcms2 schroedinger orc speex texi2html x264 flac
+fontconfig freetype gnutls libgcrypt libgpg-error libtasn1 lzo2
+libcddb libcdio popt libdca libdvdnav libdvdread libdvdcss libdvdplay
+libid3tag libmad libmatroska libebml libmodplug libmpcdec live555 lua
+taglib cmake libidn twolame libsndfile
+
+or you may install a VLC binary distribution from videolan.org, and
+locate the corresponding VLC sources, and compile the CCN plugin for
+VLC against the include files in the VLC sources.
+ 
+Three system-dependent makefiles are provided, Makefile.Linux, Makefile.OSX,
+and Makefile.OSX-VLCsrconly
+
+If you have not already compiled the CCN library, do so, then use
+the appropriate Makefile to compile the CCN VLC plugin.
+
+The CCN vlc plugin Makefile.Linux and Makefile.OSX make use of the
+pkg-config info to locate the necessary vlc include files, and the
+correct directory in which to install the vlc access plugins.
+
+The Makefile.OSX-VLCsrconly does not assume that pkg-config is present,
+so you must set VLCAPP to where the VLC app has been installed
+(typically /Applications/VLC.app) and VLCSRC to where the unpacked
+VLC source is present (e.g., /Users/example/Software/vlc-2.0.3)
+
+Note that to VLC, a CCN URI must start ccnx:/// (because of the URI parser in VLC).
+
+In order to build VLC for Android with the CCNx access module, build CCNx for
+Android, then follow the VLC instructions for building for Android and
+ensure that you can do this without error before you:
+
+	Modify vlc-android/jni/Android.mk to add "-lccnx -lcrypto" to the
+		LOCAL_LDLIBS definition
+	and place a copy of libccn.a and libcrypto.a built for Android
+	as part of the CCNx build in the $(VLC_CONTRIB)/lib directory.
+	Modify vlc/modules/access/Modules.am to add the following
+		SOURCES_access_ccn = ccn.c
+		CFLAGS_access_ccn = -I/var/tmp/ccnx/csrc/include -DVLCPLUGINVER=20200
+		LIBS_access_ccn = -lccnx -lcrypto
+		libvlc_LTLIBRARIES += libaccess_ccn_plugin.la
+	near the other SOURCES_access_xxx definitions.
+	Place a copy of ccnx/apps/vlc/ccn.c in the VLC source modules/access/
+	directory.
+	Redo the VLC android build (sh compile.sh) which should now incorporate
+	the CCNx code.

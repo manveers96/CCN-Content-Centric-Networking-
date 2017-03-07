@@ -1,0 +1,58 @@
+Steps for Video Streaming Through CCN and VLC plugin---->
+
+1) Install following packages on each node:
+sudo apt-get update
+sudo apt-get install libssl-dev libexpat1-dev libpcap-dev libxml2-utils vlc
+openjdk-7-jdk ant git-core gcc athena-jot python-dev make libvlc-dev libvlccore-dev
+libvlc-dev
+
+
+2) Install CCNx on each node:
+cd
+git clone https://github.com/manveers96/CCN-Content-Centric-Networking-.git
+cd ccnx
+./configure
+make
+sudo make install
+
+
+3) Start CCNx daemon on each node:
+ccndstart
+
+4) Make a directory that will act as repository , providing persistent storage of
+CCNx content backed by a file system:
+mkdir ~/ccnDir
+export CCNR_DIRECTORY = ~/ccnDir
+(optional) 
+
+5) Start ccnr daemon:
+ccnr &
+
+6) Add all interfaces to CCNx:
+ccndc add ccnx:/ udp ip_of_system_connected
+ccndc add ccnx:/ udp ip_of_h1
+ccndc add ccnx:/ udp ip_of_r2
+ccndc add ccnx:/ udp ip_of_r4
+
+7) Configure vlc:
+sudo sed -i ’s/geteuid/getppid/’ /usr/bin/vlc
+
+8) Install vlc plugin:
+cd ~/ccnx/apps/vlc
+make -f Makefile.Linux
+sudo make install
+
+9) Publish content, here h1 acts as publisher, so in h1:
+ccnputfile ccnx:/h1/filename srcFilePath
+
+10) Now to access it in subscriber:
+ccngetfile ccnx:/h1/filename
+destFilePath
+
+11)For video streaming:
+vlc ccnx:///ccnx_uri
+
+
+
+
+-------------------END-------------------------------

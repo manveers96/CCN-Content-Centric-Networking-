@@ -1,0 +1,175 @@
+CCND(1)
+=======
+
+NAME
+----
+ccnd - CCNx Daemon
+
+SYNOPSIS
+--------
+*ccnd* [-h]
+
+DESCRIPTION
+-----------
+*ccnd* is not normally executed directly. Use *ccndstart(1)* to run an
+instance of ccnd. *ccnd* normally runs indefinitely.  Use
+*ccndsmoketest(1)* to terminate a *ccnd* (or use *kill(1)*).
+
+*ccnd* is the software forwarder/router for CCNx and is required for
+normal CCNx protocol communication.  The typical configuration is to
+run one *ccnd* on each host; applications running on the host will
+communicate through the local *ccnd*, and it will communicate over
+attached networks (directly or through a link adapter process).
+
+*ccnd* takes no options on the command-line. Basic options are controlled
+by environment variables. The forwarding table (FIB) is populated with
+registration protocols over CCNx.  Use *ccndc(1)* for configuring the
+FIB.
+
+*ccnd* communicates via the CCNx protocol running over UDP, TCP, or
+Unix domain sockets (the latter for local processes only). It also
+provides a simple web status view over HTTP, on the `CCN_LOCAL_PORT`.
+
+
+OPTIONS
+-------
+*-h*::
+	Print a usage message describing environment variables.
+
+ENVIRONMENT
+-----------
+
+Options for *ccnd* are set via environment variables. 
+
+    CCND_DEBUG=
+      0 - no messages
+      1 - basic messages (any non-zero value gets these)
+      2 - interest messages
+      4 - content messages
+      8 - matching details
+      16 - interest details
+      32 - gory interest details
+      64 - log occasional human-readable timestamps
+      128 - face registration debugging
+      bitwise OR these together for combinations; -1 gets max logging
+    CCN_LOCAL_PORT=
+      UDP port for unicast clients (default 9695).
+      Also listens on this TCP port for stream connections.
+      Also affects name of unix-domain socket.
+    CCN_LOCAL_SOCKNAME=
+      Name stem of unix-domain socket (default /tmp/.ccnd.sock).
+    CCND_CAP=
+      Capacity limit, in count of ContentObjects.
+      Not an absolute limit.
+    CCND_MTU=
+      Packet size in bytes.
+      If set, interest stuffing is allowed within this budget.
+      Single items larger than this are not precluded.
+    CCND_DATA_PAUSE_MICROSEC=
+      Adjusts content-send delay time for multicast and udplink faces
+    CCND_DEFAULT_TIME_TO_STALE=
+      Default for content objects without explicit FreshnessSeconds,
+      in seconds.  Must be positive.
+    CCND_MAX_TIME_TO_STALE=
+      Limit, in seconds, until content becomes stale.  Must be positive.
+      If necessary, this will be reduced to the largest value
+      that the implemementation can enforce.
+    CCND_MAX_RTE_MICROSEC=
+      Value used to limit response time estimates kept by default strategy.
+    CCND_KEYSTORE_DIRECTORY=
+      Directory readable only by ccnd where its keystores are kept
+      Defaults to a private subdirectory of /var/tmp
+    CCND_LISTEN_ON=
+      List of ip addresses to listen on; defaults to wildcard. The
+      addresses may be enclosed in square brackets.  The list elements
+      are separated by whitespace, commas, or semicolons.  Both IPv4 and
+      IPv6 addresses may be used.  Set this if you want to limit
+      connectivity to a particular set of configured addresses.
+      The most useful non-default setting is probably "localhost".
+      Note that outgoing tcp connections may still be made.
+    CCND_AUTOREG=
+      List of prefixes to auto-register on new faces initiated by peers.
+      The prefixes are represented as ccnx URIs, and
+      are separated by whitespace, commas, or semicolons.
+      If this is specified, the ccnd can be used as a "hub" to forward
+      interests matching these prefixes to any peer that talks to it.
+      example: CCND_AUTOREG=ccnx:/ccnx.org/Users,ccnx:/ccnx.org/Chat
+    CCND_PREFIX=
+      A prefix stem to use for generating guest prefixes.
+
+NAME SPACES
+-----------
+After *ccnd* starts, control of its behavior takes place using CCNx protocols.
+For more information, please refer to
+link:../technical/NameConventions.html[NameConventions]
+int the technical documentation.
+
+This is where ccnd publishes its key, using the service discovery profile:
+
+    ccnx:/%C1.M.S.localhost/%C1.M.SRV/ccnd
+
+For the benefit of neighboring nodes, the key is published here as well:
+
+    ccnx:/%C1.M.S.neighborhood/%C1.M.SRV/ccnd
+
+The following is the main prefix used to communicate with this instance of ccnd.
+Here +<ccndid>+ refers to the SHA256 digest of the ccnd's public key.
+Note that, for historical reasons, this does not use the key marker convention.
+Each instance of ccnd may be assumed to be using a distict public key.
+See link:../technical/Registration.html[Registration] for a description of
+the protocols used in in this namespace.
+
+    ccnx:/ccnx/<ccndid>
+
+A stream of face status changes may be obtained through the the name below.
+This uses the standard versioning and segmentation profiles, so a utility
+such as *ccncat* may be used to read it.  At present, only one version of
+the stream is started when it is requested for the first time, so a program
+that needs to access it should start shortly after *ccnd* and run as long as
+the *ccnd* instance is around. The format of this stream is a simple
+text-based one.
+
+    ccnx:/ccnx/<ccndid>/notice.txt
+
+When two ccnds begin exchanging interest and data, an automatic handshake
+takes place to agree upon a name prefix that both nodes can use to refer
+to the communication channel.
+This prefix is registered on each node to forward interests to the other.
+An example of such a prefix is
+
+    ccnx:/%C1.M.FACE/%C1.M.G%00%00XL%DB%F0%0A%0APn%0F%B1%F2%1F
+
+The first name component is always the same.
+The second component is a randomly-generated guid, with a guid marker.
+(These guids are abbreviated below to make them easier to read.)
+
+As a byproduct of this handshake,
+each ccnd creates a content object that represents its endpoint.
+For example:
+
+    ccnx:/%C1.M.FACE/%C1.M.G%00%00XL42/%C1.M.NODE/%C1.M.K%00...1/face~7/%FD...
+    ccnx:/%C1.M.FACE/%C1.M.G%00%00XL42/%C1.M.NODE/%C1.M.K%00...2/face~9/%FD...
+
+The third component is the constant +%C1.M.NODE+,
+to allow the remainder if the namespace to be used for other purposes.
+The fourth component is the ccndid, with the key digest marker.  These have
+been abbreviated in the example.
+The fifth component is the faceid, in decimal ascii,
+with a leading distinguisher of 'face~'.
+The remaining two components are for standard versioning and segmentation.
+
+Currently there is no payload in these content objects.
+This is subject to change.
+
+EXIT STATUS
+-----------
+*0*::
+     Success
+
+*1*::
+     Failure (syntax or usage error)
+
+AUTHOR
+------
+Michael Plass
+

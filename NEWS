@@ -1,0 +1,1472 @@
+Changes between 0.8.1 and 0.8.2:
+--------------------------------
+This highlights some important changes since the most recent numbered release.
+Refer to http://redmine.ccnx.org/versions/21 for more details on CCNx 0.8.2.
+
+- This release features a refactored strategy layer, making it straightforward to add new
+  strategies in a modular way.  Alongside the traditional "default" strategy there are
+  two new examples, a "parallel" strategy that sends interests on all available faces
+  and a "loadsharing" strategy that sends each arriving interest to just one of the
+  available faces.  Strategies may be selected by prefix.  This selection may be
+  done using new subcommands to the ccndc utility.
+
+	* Feature #100929: Implement Junit test suites to facilitate bulk testing.
+	* Feature #100983: strategy layer refactoring
+	* Feature #100984: strategy labels on prefixes
+	* Feature #100990: Restore SYNC_NOISY to INFO
+	* Feature #100992: Add test-security to standard java tests
+	* Feature #100993: Add test-versioning back into standard java tests
+	* Feature #100994: Remove unused cruft from build.xml
+	* Feature #101036: java sync should use Deque operations instead of Stack as recommended in the javadocs
+	* Feature #101039: UDP mode for java netmanagers is not tested in standard testing
+	* Feature #101053: ccncatchunks2 could use improved hole-filling and interest lifetime management
+	* Bug #101030: build.xml setup of ccnr environment is incorrect
+	* Bug #101033: Handling of extremely large values of MaxSuffixComponents is incorrect
+	* Bug #101037: ccn_seqwriter library code should not limit the block size to 4096 bytes
+	* Bug #101042: CcnFileProxy uses deprecated methods
+	* Bug #101046: VLC 2.1.0 release necessitates change in plugin Makefile
+	* Bug #101048: Do not rely on accept(2) returned addr for recognizing a unix-domain socket
+	* Bug #101052: Unbreak objtree build target
+	* Bug #101057: ccn_sign_content / ccn_chk_signing_params do not properly incorporate a timestamp in a template via ccn_signing_params
+	* Bug #101058: ccndc in daemon mode does not exit cleanly when ccnd goes away
+	* Bug #101059: testTimeouts a little too strict
+	* Bug #101060: ccnd cache lookups should take a controllable amount of work
+	* Bug #101061: ccnd minimum interest lifetime problem
+	* Bug #101062: some ccnd logging missing check for logging enabled before calling expensive log procedure
+	* Support #101047: Prepare for ccnx-0.8.2 release
+
+Changes between 0.8.0 and 0.8.1:
+--------------------------------
+This highlights some important changes since the most recent numbered release.
+Refer to http://redmine.ccnx.org/versions/20 for more details on CCNx 0.8.1.
+
+- This release fixes a number of bugs, including a serious memory leak in ccnd.
+
+	* Bug #101029: unbounded test log file growth
+	* Bug #101032: ccnr should start at specified segment on checked start write
+	* Bug #101034: No obvious documentation for how to start ccnr exists on website
+	* Bug #101035: small leak in ccn_fetch should a realloc() fail
+	* Bug #101038: Inconsistent encoding of zero-length name components
+	* Bug #101043: ccnr r_store_lookup_backwards can fail
+	* Bug #101044: valgrind reports memory leak in 0.8.0 ccnd
+	* Bug #101049: ccnd can remove newly arrived content too quickly
+	* Support #101045 Prepare for ccnx-0.8.1 release
+
+Changes between 0.7.2 and 0.8.0:
+--------------------------------
+This highlights some important changes since the most recent numbered release.
+Refer to http://redmine.ccnx.org/versions/17 for more details on CCNx 0.8.0.
+
+- The use of symmetric key HMACs in place of public/private key signatures
+  is now an option in both libraries.  In situations where it can be used,
+  it provides a much higher performance alternative.
+- The content store in ccnd has been improved.  It now uses a flatname
+  representation for indexing, in the same way that ccnr does.  Also, the
+  underlying skiplist implementation has moved into the library, so that
+  applications may take advantage of it in the future.  In the process,
+  some old ccnd bugs relating to the handling of extreme values of
+  FreshnessSeconds were fixed.
+- The more readable escaping convention in URIs is now the default.
+  If for whatever reason you prefer to use only percent-escaping in URIs, use
+
+	CFLAGS='-g -DCCN_URI_DEFAULT_ESCAPE=4' ./configure
+
+  before typing make.  Note that both forms of escaping are accepted as input.
+- An example rc startup script is now included, but needs to be installed by
+  hand.  It is coded for Ubuntu Linux, but should be easily adaptable to other
+  systems.
+- This release drops support for Java JDK 1.5.
+
+  * Issues Resolved:
+	* Bug #100118: ccnd does not handle FreshnessSeconds=0 correctly.
+	* Bug #100119: ccnd should handle large values of FreshnessSeconds
+	* Bug #100558: test-security does not pass
+	* Bug #100897: timeout values  should be consistently long throughout java code 
+	* Bug #100966: Incorrect processing of CCNS_SYNC_SCOPE=3
+	* Bug #100977: Problem with verify in CCNInputStream when trying to retrieve key
+	* Bug #100987: Non-portable use of local keyword in Bourne shell scripts
+	* Bug #100998: VLC 2.1.x block_New definition removed
+	* Bug #100999: java BLOCK_AFTER_FIRST_SEGMENT doesn't work in all cases
+	* Bug #101000: sync_diff code should reset differencing data when aborting or completing a comparison
+	* Bug #101004: QueuedContentHandler has a sync error
+	* Bug #101005: CCNx Android Services build out of sync with API changes to CCNx C-lib
+	* Bug #101007: ccn_resolve_version() should distinguish between no response and finding an unversioned object.
+	* Bug #101010: ccnseqwriter command busy-loops when its ccnd goes away
+	* Bug #101011: Compile warning when building new symmetric key code with openssl 0.9.8
+	* Bug #101012: Improve recovery from node fetch timeout in java sync
+	* Bug #101013: node fetch timeout in java sync implementation should be longer and settable
+	* Bug #101015: ccnd needs to protect against malformed/malicious ccnb encoded data on stream faces
+	* Bug #101018: Java symmetric key code uses old Sun class
+	* Bug #101020: library sync watch functionality needs to use an appropriate scope setting
+	* Bug #101022: update eclipse configuration to include systemtest
+	* Bug #101023: ccnr should not schedule expiry events based on the FreshnessSeconds of stored content
+	* Bug #101026: GACMNodeKeyDirtyTestRepo bugs
+	* Feature #100617: Android code to support 'ccnd' no longer needs to run the script to create keystore.
+	* Feature #100720: Java testing log level setting is confusing
+	* Feature #100874: Implement a keystore that can support symmetric keys
+	* Feature #100890: Add an ordered dictionary to libccn
+	* Feature #100912: Support symmetric key signing and verification on the C side
+	* Feature #100942: Incorporate better hash functions
+	* Feature #100955: Allow AnswerOriginKind = 2 in Interests
+	* Feature #100960: track caller context in ccn_fetch API
+	* Feature #100988: Make =-escaping of ccnx URIs the default
+	* Feature #100995: Review use of "caller" parameter to java NetManager expressInterest
+	* Feature #100997: javasrc System testing should move to javasrc/src/systemtest and 'make test' should be isolated to running unit tests
+	* Feature #101003: Add option to ccnnamelist to make it easier to test parse speed
+	* Feature #101021: Add example rc init scripts
+	* Feature #101024: Improve documentation for deprecated key functionality in the C library
+	* Support #100937: Prepare for ccnx-0.8.0 release
+	* Support #100991: Add support for running on OpenBSD
+	* Support #101019: Spruce up csrc makefiles to make them more easily maintainable
+
+Changes between 0.7.1 and 0.7.2:
+--------------------------------
+This highlights some important changes since the most recent numbered release.
+Refer to http://redmine.ccnx.org/projects/ccn/versions/15 for more details on
+CCNx 0.7.2.
+
+- ccnx-0.7.2 is primarily a bug-fix release.  Some rare but serious bugs have been fixed, so
+	users are advised to upgrade.
+- One feature is present in a preview form; if you want to see the more readable URI name
+	representation, use
+
+		CFLAGS='-g -DCCN_URI_DEFAULT_ESCAPE=2' ./configure
+
+	before typing make (c only - for java a source change is needed).  This is planned to become
+	the default behavior in the next feature release.
+
+  * Issues Resolved:
+	* Bug #100355: Document StatusResponse codes.
+	* Bug #100629: ccn/ccnr library code base causes numerous build warnings on OpenSolaris/sparc
+	sun4v
+	* Bug #100887: Problem with java sync callback handoff
+	* Bug #100888: LogTest diagnostics are buggy
+	* Bug #100889: ccn_charbuf_putf has extra call to va_end()
+	* Bug #100891: Cannot run csrc 'make depend' unless GCC variable is set
+	* Bug #100892: sync_diff.c code accesses freed memory
+	* Bug #100893: CCNx Android build 'make distclean' and 'make clean' will generate numerous
+	errors
+	* Bug #100894: Fix warnings when compiling ccn_client.c
+	* Bug #100895: Current java code doesn't compile using JDK 1.5
+	* Bug #100898: ccnd use-after-free error
+	* Bug #100899: sync_diff code still leaks memory when splitting nodes
+	* Bug #100902: Lost carry in ccnb_append_timestamp_blob
+	* Bug #100904: Missing doxygen comments in ccnc.c
+	* Bug #100905: Default ccnd strategy can send to multiple faces too soon
+	* Bug #100906: ccnd can return content in response to an interest with a duplicate nonce
+	* Bug #100908: test_local_tcp can hang indefinitely
+	* Bug #100917: ccnd has a few small leaks and some memory in use at exit that it could clean up
+	* Bug #100920: when using ccn_ccnbtoxml -v the more readable name can violate XML requirements
+	* Bug #100921: Broken link in ccnx technical documentation
+	* Bug #100930: Java decoder can corrupt previously input data in unusual case
+	* Bug #100933: Excess ccnd logging at low log setting
+	* Bug #100943: Various doxygen warnings show up in csrc during > make documentation
+	* Bug #100954: sync code confuses local/remote hashes when recording hashes seen
+	* Bug #100957: sync_diff code still leaks memory when splitting nodes (part 2)
+	* Bug #100963: csrc/lib/dir.mk has outdated reference to ccndumppcap
+	* Bug #100967: Java sync node builder cuts off nodes too quickly
+	* Bug #100971: Java sync doesn't pop back correctly after finding update in multi level tree
+	* Bug #100973: ccndc can ccn_charbuf_destroy() an uninitialized charbuf
+	* Bug #100974: HttpProxy's NetFetch doesn't create the keystore it tries to use in place of
+	user's default keystore.
+	* Bug #100975: ccnx logo for Android is too big
+	* Feature #100915: Junit tests and System Tests should be moved to a separate directory, yet
+	retain the same package structure.
+	* Feature #100919: RFE: an easier to read encoding for multiple escaped characters in ccnx URIs
+	* Feature #100941: ccnd could print Excludes in interest to improve debugability
+	* Feature #100964: Update wireshark plugin patches for wireshark 1.8.6
+	* Support #100903: spelling error -- doc/technical/CCNDStatus.txt: <propogating> Number of
+	propogating Interests
+	* Support #100911: CCNx makefile needs a pkgbin target to support generating a binary package
+	set
+	* Support #100935: Some users in the CCNx community would like a maven capable build for the
+	javasrc
+	* Support #100936: Prepare for ccnx-0.7.2 release
+
+Changes between 0.7.0 and 0.7.1:
+--------------------------------
+This highlights some important changes since the most recent numbered release.
+Refer to http://redmine.ccnx.org/projects/ccn/versions/14 for more details on
+CCNx 0.7.1.
+
+  * Issues Resolved:
+	* Bug #100164: SegmentationProfile.getSegment doesn't retry if retrieved segment doesn't verify
+	* Bug #100380: CCNNetworkManager resets static value in constructor
+	* Bug #100753: CCNS_SYNC_SCOPE is undocumented
+	* Bug #100754: TeX problem with ifpdf?
+	* Bug #100782: ccn_resolve_version does not return 1 when name is extended
+	* Bug #100799: SyncTest loop
+	* Bug #100807: Document the xml presentation of ccnd status
+	* Bug #100864: CCN plugin for VLC on Android stalls
+	* Bug #100868: Lots of warnings in java source code
+	* Bug #100870: Makefile typo causes apps to be installed improperly in ./bin and ./lib
+	* Bug #100871: Java sync comparator gives up too early in some cases
+	* Bug #100872: Initialize _lifetime in ForwardingEntry
+	* Bug #100875: Clean up various minor issues in java sync code
+	* Bug #100876: Java sync can recreate bad tree in update
+	* Bug #100877: Synchronization problems with java synccomparator handoff
+	* Bug #100880: Findbugs finds issues in java code
+	* Bug #100885: Cleanup CCNx Android build and bring up to date with latest NDK/SDK
+	* Feature #100157: generalize signing/verification code to support MACs
+	* Feature #100756: restructure sync slice code for java library
+	* Feature #100777: Improve and modernize java library timer mechanisms
+	* Feature #100869: Improve in-line documentation of java sync code
+	* Feature #100878: Start a repository in ccndstart
+	* Feature #100879: Add guest prefix support
+	* Feature #100881: Java BloomFilter should be deprecated
+	* Support #100884: Prepare for ccnx-0.7.1 release
+
+Changes between 0.6.2 and 0.7.0:
+--------------------------------
+This highlights some important changes since the most recent numbered release.
+Refer to http://redmine.ccnx.org/projects/ccn/versions/13 for more details on
+CCNx 0.7.0.
+
+  * Issues Resolved:
+	* Feature #100862: Routing agents need to learn about the adjacency of the network that they
+	find themselves participating in. Add support for this to ccnd
+	* Bug #100856: ccn_disconnect followed by ccn_connect leaves connection in a semi-functional
+	state
+	* Bug #100855: ccn_destroy() call to EVP_cleanup() causes trouble for any remaining handles
+	and other users of the OpenSSL services
+	* Bug #100442: ccn_charbuf_append_datetime_now unimplemented
+	* Bug #100242: AbstractInputStream null pointer when content length 0
+	* Bug #100177: CCNFileInputStream mishandles filename with segment number present
+	* Bug #100011: java Exclude filters should be able to match implicit digest name component
+	* Bug #100854: CCNx Android build is broken, missing a string
+	* Bug #100853: Delays with VLC playing ccnx hosted content
+	* Bug #100851: looping in ccnd when running schedule
+	* Feature #100850: ccn_resolve_version() needs to manage timeout/retransmit of interests better
+	* Feture #100816: CCNx Android Service needs a WebView to load ccndstatus from itself
+	* Bug #100861: ccnd expiry of stale data can wait too long when traffic is high
+	* Feature #100858: VLC plugin could use separate preferences for version timeout and media 
+	header timeout
+	* Bug #100693: Remove some obsolete code from ccnd matching loop
+	* Feature: #100857: Define a way carry experimental extension fields in the ContentObject 
+	schema
+	* Bug #100860: LogTest tests can fail due to unsynchronized parallel execution
+	* Bug #100814: minor C api cleanups
+	* Feature #100847: CCNx Android Services needs to have a toggle to enable/disable sync on
+	startup
+	* Bug #100859: Bugs/problems in sync implementation
+	* Feature #100852: Local ccnd / local prefix auto-configuration
+
+Changes between 0.6.1 and 0.6.2:
+--------------------------------
+This highlights some important changes since the most recent numbered release.
+Refer to http://redmine.ccnx.org/projects/ccn/versions/12 for more details on
+CCNx 0.6.2.  This release brings improvements to sync library support in both C (#100785) and
+Java (#100772), automatic key generation (#100822), better tools for autoconfiguration
+(#100820, 100838, 100844), stability improvements on Android (#100819), along with the usual
+assortment of bug fixes and enhancements.
+
+  * Issues Resolved:
+	* Feature #100772: Provide proper support for sync notification in the java library
+	* Feature #100785: Refactor some of Sync
+	* Feature #100789: Java binary decoder should allow preset of element size
+	* Bug #100804: Reduce the number of prefix registrations in the java tests
+	* Bug #100809: java sync test code needs to delete slices when complete
+	* Bug #100810: Memory leaks in ccnr/sync and client library
+	* Support #100811: Setup a release job on jenkins for CCNx package releases
+	* Bug #100812: mistyped long in ccnd_handle
+	* Bug #100817: CCNx Android Service missing some CCNS_ defaults, and should provide CCNS_DEBUG
+	as a configurable setting, utility api to add routes.
+	* Bug #100819: Android CCNx Service is unstable on ICS, and has trouble restarting in some cases
+	* Feature #100820: Extension of ccndc
+	* Feature #100821: Corrections and extensions for Makefile and configure scripts
+	* Feature #100822: Automatic keystore creation by C-API
+	* Support #100823: Update targets and naming used Android app makefiles
+	* Feature #100824: It should be possible to register to receive a ContentObject in the java lib
+	without writing an interest
+	* Support #100825: Prepare for ccnx-0.6.2 release
+	* Bug #100826: Missing dependency
+	* Bug #100827: face delays in ccnd should be reduced, esp. for datagram faces
+	* Bug #100828: Update VLC plugin
+	* Bug #100830: wireshark plugin displays name components as raw UTF-8 strings instead of
+	%-escaping them
+	* Support #100831: Update ccndc man page to reflect new features
+	* Support #100832: Remove email address from man pages
+	* Bug #100833: Convert uses of old ccn_signed_info_create()/ccn_encode_ContentObject() api to
+	use ccn_sign_content() api
+	* Bug #100838: Broadcast for neighbor discovery
+	* Bug #100839: if ccnd is not running, ccndc does not show help
+	* Feature #100841 Java Merkle tree signing code should log at FINE/FINER rather than INFO for
+	debugging messages
+	* Bug #100842: some source files have acquired CRLF line endings
+	* Bug #100843: ccndc segmentation fault on FreeBSD
+	* Feature #100844: Add example of guest prefix assignment
+	* Bug #100845: SyncTestRepo test occasionally has runaway log output
+	* Feature #100846: seqwriter library code needs a way to set freshness on generated objects
+	* Bug #100848: PACKLIST is missing csrc directory
+	* Bug #100849: JDK 1.6 API used in SyncTreeEntry TreeSet.higher() call
+
+Changes between 0.6.0 and 0.6.1:
+--------------------------------
+This highlights some important changes since the most recent numbered release.
+Refer to http://redmine.ccnx.org/projects/ccn/versions/10 for more details on
+CCNx 0.6.1.
+
+  * Improvements in interest forwarding (#100321) - Introduce new PIT data structure.  Major
+    revision to the way ccnd manages pending interests and improve way interest lifetimes are
+    accounted.  In the default strategy, preserve more of the ordering.  This change removes
+    the "hack" that allowed a few similar interests from the same source to pass through.
+    This may affect applications that attempt to do hole-filling by resending interests prior
+    to their timeout.  For an example, see #100806.
+  * TCP for libccn connections (#100760) - Make it possible to configure only TCP for local 
+    connect with -DCCN_LOCAL_TCP, as alternative to Unix-domain socket.  This offers a way for
+    devices with sandboxed filesystems such as within the Android context to get around the issue
+    of sharing the UNIX domain file descriptor to connect to ccnd.
+  * C implementation of text chat (ccnc) (#100787, #100790, #100791, #100793) - The *ccnc* utility 
+    is a text-based community chat program.  Works with existing CCNx chat clients.
+  * Improvements to Android CCNx Services stability (#100784, #100645, 100778, #100781) - Fixed
+    a number of Android CCNx Services stability issues, including refresh updates to IP address
+    in the UI when there an intent CONNECTIVITY_UPDATE is received, improve number of checks on
+    service startup to print useful diagnostics to the user, and avoid problems that may prevent
+    startup and proper functioning of CCNx.  Added About menu item to get CCNx version information
+    and added a Reset menu item to clear error states and clear startup/shutdown errors.
+    
+  * Issues Resolved:
+	* Bug #100321: Improve efficiency interest suppression
+	* Bug #100358: DataUtils getBytesFromFile and large files
+	* Bug #100374: test.repo.Misc.java has bad logic
+	* Bug #100645: Android CCNx service control - tapping "Start All" button multiple times quickly
+	  causes services to fail.
+	* Bug #100682: CCNx tests uses grep flags unsupported by Solaris SunOS default grep but tests
+	  still succeed
+	* Bug #100694: Fix ccntestloop stop command to more reliably clean up spawned processes
+	* Bug #100711: Some gitignore files ignore too much
+	* Bug #100728: HttpProxy tries to generate a keystore using a script that is no longer installed
+	* Bug #100733: Binary decoder should increase its buffer size by larger increments at overflow
+	* Bug #100744: CCN_GET_NOKEYWAIT flag to ccn_get() doesn't work
+	* Bug #100746: Compiler erroneously detects uninitialized use of "cmd" in ccnsyncslice.c
+	* Bug #100747: duplicate object file in csrc/ccnd/Android.mk
+	* Bug #100748: small memory leak in ccnr when creating a new repository
+	* Bug #100749: Warning in java repo due to method change
+	* Bug #100750: Mac OS X 10.7 Lion users need clear instructions on what build pre-req tools need
+	  to be installed
+	* Bug #100755: ccnd should hold unsatisfied scope0 interests
+	* Bug #100758: SyncCacheEntryFetch can miss existing entries
+	* Bug #100764: Java logging for FAC_SEARCH is broken
+	* Bug #100765: BinaryXMLDecoder uses inappropriate algorithm for increasing decoder array sizes
+	  and the logging is broken.
+	* Bug #100766: Null pointer dereference in ccnr
+	* Bug #100768: fix potential NULL pointer deref and some uses of realloc() that could result in
+	  leaks
+	* Bug #100769: name enumeration attempts to open mid stream
+	* Bug #100770: versioning profile should be more defensive about what a valid version number is
+	* Bug #100771: CCNxProtocol document description of FIB should not refer to destinations
+	* Bug #100778: Android CCNx Service crashes on startup if CCNR "Unable to get repository policy
+	  object version"
+	* Bug #100780: CCNx Android makefile should be posix compliant
+	* Bug #100781: Android CCNx Service fails to start CCNR with "Unable to get repository policy
+	  object version"
+	* Bug #100783: libccn code should be compiled with PIC on NetBSD
+	* Bug #100784: Android CCNx Service displays loopback address on ICS even when other *faces are
+	  available
+	* Bug #100788: exception in ccnlsrepo
+	* Bug #100790: lned does not work properly on Mac OS X 10.5
+	* Bug #100791: ccnc input logic needs improvement
+	* Bug #100792: MergeSecureKeyCacheTestRepo has initialization bug
+	* Bug #100795: CCNDCacheManager.clearCache() issues too many interests
+	* Bug #100796: Improve performance of ccnr rightmost-child operations
+	* Bug #100800: ServiceDiscoveryProfile suffers from a race condition when publishing a local
+	  service key
+	* Bug #100801: ccnr takes a segmentation fault if output fd closed due to other errors
+	* Bug #100802: LatestVersionTest failures with new interest forwarding
+	* Bug #100805: Memory leak in ccnr
+	* Bug #100806: VLC plugin needs updates
+	* Feature #100041: java tools should support a -h argument
+	* Feature #100647: Default support for multiple architectures in MacOS X build
+	* Feature #100701: A number of methods in ContentName have no general test coverage
+	* Feature #100715: Provide interface for applications to set up Sync configuration slices and 
+	  receive notification of (newly) sync'ed ContentObjects - in java library
+	* Feature #100752: Side door for quickly adding content to a repo
+	* Feature #100759: Extensions to HttpProxy
+	* Feature #100760: C library needs method for connecting to ccnd via TCP in place of Unix-domain
+	  socket
+	* Feature #100761: Implement deletion of btrees entries
+	* Feature #100767: ccnsyncwatch should flush output after each line
+	* Feature #100787: Provide a version of ccnchat that uses libccn
+	* Feature #100793: ccnc man page needs to be updated to document new options
+	* Support #100745: Update jenkins CI to use latest NDK/SDK for Android build project
+	* Support #100757: Prepare for ccnx-0.6.1 release
+	* Support #100779: CCNx Android build should explicitly set APP_PLATFORM and APP_ABI
+
+Changes between 0.5.1 and 0.6.0:
+--------------------------------
+This highlights some important changes since the most recent numbered release.
+Refer to http://redmine.ccnx.org/projects/ccn/versions/9 for more details on
+CCNx 0.6.0.
+
+  * A new varargs constructor has been added to ContentNames, a new Component
+    class has been created, and ContentNameProvider and ComponentProvider
+    interfaces have been provided to simplify the generation and minimize the
+    overhead of building ContentNames. The Component class provides an
+    immutable Component type, which encapsulates the component as a byte[]
+    array, that is designed to hold static components to be passed into
+    ComponentName constructors. In code, a Component should be used wherever
+    possible in lieu of a static final byte[] array or a static final String,
+    to avoid unnecessary copying.
+
+    The ContentName varargs constructor, and the ContentNameProvider and
+    ComponentProvider interfaces, allow classes to pass ContentNames and
+    Components directly into the ContentName constructor.
+
+    Most of the static component-related methods that previously existed under
+    ContentName have been moved to the new Component class. The old methods
+    remain available but are deprecated; it is recommended that code be changed
+    to use the new static methods under Component. Please see Component,
+    ContentName, and ContentNameProvider documentation for more information.
+
+  * Issues Resolved:
+	* Bug 100739 Provide installed command to manipulate Sync configuration slices
+	* Bug 100738 Missing dependencies for csrc/lib/ccn_sync.c
+	* Feature 100732 Tests should use C repo (repo2) instead of the old java
+	  one
+	* Bug 100737 ccnr can fail to answer enumeration requests when interests
+	  are reordered
+	* Bug 100725 The signing and verification code in the C library needs
+	  to conditionally compile elliptic curve (EC) features in case the
+	  crypto library is too old or has them compiled out.
+	* Bug 100722 CCN C-library changes for must be brought up to date in
+	  Android
+	* Bug 100470 Make in android directory with current tools leaves chaff
+	* Bug 100726 Still some occasional deadlocks in VLC plugin
+	* Feature 100729 VLC CCN plugin should provide access to prefetch offset 
+	  via VLC option
+	* Feature 100499 Unify ContentName constructors
+	* Bug 100046 OpenSolaris build fails when cc is actually gcc
+	* Bug 100724 Possible memory leaks of crypto allocated memory in merkle
+	  hash tree signature verification
+	* Bug 100723 VLC plugin needs prefetcher
+	* Bug 100719 User requested flush should actually flush out to network
+	* Bug 100712 Java repo queue mismatch causes heap space problems
+	* Bug 100704 Improve performance of flow control
+	* Bug 100686 ccnlink parses its arguments incorrectly
+	* Bug 100677 Several utilities do an incorrect close, causing a warning
+	  exception
+	* Bug 100671 Netmanager thread can die mysteriously
+	* Feature 100661 Improve logging in flow controller
+	* Bug 100657 VLC plugin needs updates
+	* Feature 100654 Input streams should have a true "blocking" mode
+	* Bug 100608 CCNNetworkObjectTestRepo and other IO tests using the repo
+	  need to insure files have reached the repo before testing them
+	* Feature 100574 Add a new logging facility (FAC_SEARCH?) for features
+	  like NameEnumeration and PathFinder
+	* Bug 100528 VersioningProfile logging should be part of a facility
+	* Bug 100717 Make loops in doc/manpages
+	* Bug 100708 SyncNodeIncRC implementation is incorrect
+	* Feature 100713 Refactor matching code so Exclude tests can be done
+	  separately
+	* Bug 100716 fix couple of compiler warnings in ccn_sync.c	
+	* Support 100662 Setup CCNx Open Source project commit notifications via
+	  email + outbound tweets for all commits to projectccnx
+	* Bug 100664 Remove ccnd/android_msg.c
+	* Feature 100675 C/Java Libraries should be able to use different digest
+	  algorithms based on key type for signing
+	* Bug 100676 Multiple registrations using ccn_set_interest_filter with same
+	  prefix do not work well
+	* Bug 100688 Man page for ccntestloop
+	* Feature 100690 Improve decoding performance
+	* Bug 100691 Inconsistent formatting and use of asciidoc markup
+	* Support 100692 Prepare for ccnx-0.6.0 release
+	* Support 100695 Improve comments in ccnd
+	* Bug 100696 Broken link in top-level README
+	* Support 100697 Prepare for ccnx-0.5.2 release
+	* Feature 100698 Add use of deltas to the RootAdvise protocol
+	* Bug 100699 ccndc fails with Unable to create face in ccnx-0.5.1 on
+	  guest OS (fixed on 0.6.0)
+	* Bug 100702 Intermittent test_repo_performance failures on slow platforms
+	* Bug 100703 sync header files include other files only needed for
+	  implementation
+	* Feature 100706 Integrate ccn_schedule events with ccn_run()
+	* Feature 100707 Provide interface for applications to set up Sync
+	  configuration slices and receive notification of (newly) sync'ed
+	  ContentObjects
+	* Feature 100709 Update schema and assign DTAG for new sync delta
+	  RootAdvise response
+
+
+Changes between 0.5.0 and 0.5.1:
+--------------------------------
+This highlights some important changes since the most recent numbered release.
+Refer to http://redmine.ccnx.org/projects/ccn/versions/6 for more details on
+CCNx 0.5.1.
+
+  • As a result of Sun Java JDK packages being removed for Ubuntu (see
+    https://lists.ubuntu.com/archives/ubuntu-security-announce/2011-December/
+    001528.html), we are now using OpenJDK for Ubuntu.  Please see
+    csrc/README.linux for more information.
+
+  * Issues Resolved:
+	* Bug 100047 The top-level Makefile's method of populating ./bin does not
+	  work with Solaris make
+	* Feature 100576 Topic branch for csrc
+	* Support 100597 Ensure CCNx builds on openjdk1.6/ubuntu packages
+	* Bug 100621 NameEnumeratorTests should have better logging
+	* Bug 100651 autoreg does not work for link adaptor faces
+	* Bug 100653 Timeouts too short in DeprecatedInterfaceTest
+	* Bug 100655 RootAdvise exclusion lists can become too long
+	* Feature 100656 Fix options in SyncTest
+	* Bug 100658 Utilities should default logging to WARNING but respect
+	  environment variable settings for logging
+	* Support 100660 Prepare for ccnx-0.5.1 release
+	* Bug 100665 Graphics missing from protocol descriptions
+	* Feature 100666 ccnd should provide a way to specify default staleness
+	* Bug 100667 Man page for synctest can't be accessed from Wiki
+	* Bug 100668 implement destroyface in ccndc
+	* Feature 100669 Add parameter to ccnpoke command for specifying the length
+	  of the prefix to be registered
+	* Bug 100670 SyncTest.localStore does not set scope
+	* Feature 100672 Wireshark plugin should decode Exclude filters in
+	  Interests
+	* Bug 100673 Repo dtd and xsd missing from CCN documentation wiki
+	* Bug 100674 Sync dtd and xsd missing from doc/technical
+	* Bug 100678 ccngetfile should not print out logs at INFO by default
+	* Bug 100679 Bring sync.dtd and sync.xsd into alignment with implementation
+	* Bug 100680 Repo-1 man page should mention Java repo has been deprecated
+	* Bug 100681 Descriptions in Sync and Create Protocol descriptions should
+	  be in BNF
+	* Bug 100683 Saved output from test_repo_performance accumulates without
+	  bound
+	* Bug 100684 java repo shutdown needs to wait for data output to complete
+	  before shutting down
+	* Bug 100685 No man page for ccnrepoimport
+	* Bug 100687 No man page for ccnprintlink
+
+Changes between 0.4.2 and 0.5.0:
+--------------------------------
+This highlights some important changes since the most recent numbered release.
+Refer to http://redmine.ccnx.org/projects/ccn/versions/5 for more details on
+CCNx 0.5.0.
+
+  * Experience shows that many applications need local persistent storage.  With
+     the introduction of Repository-based synchronization, we now expect that
+     most nodes will use a local Repository running alongside their local ccnd.
+     As a result, we have changed defaults for storing content in a Repository
+     so that those store operations target only the local Repository.
+
+  * This release introduces an updated version of the Repository, with much
+     improved scalability, that is capable of easily handling content
+     collections many gigabytes in size.  The new Repo, named ccnr, is written
+     in C, has a disk-resident index, and has much higher performance, a smaller
+     footprint, and faster start-up times.
+
+     The startup and shutdown procedures have changed, as have some of the
+     configuration options and the procedure for obtaining debug information.
+     See doc/manpages/ccnr.1.html for more information about starting, stopping,
+     using, and configuring Repo, Repo policies, and links to Repository
+     protocol descriptions.
+
+     While the Repo startup procedure has changed, it still must be started
+     explicitly.
+
+  * This release introduces Sync, a mechanism for CCN components to define
+     collections of named data in Repositories, and for automatically
+     synchronizing copies of identically defined collections in neighboring
+     nodes.  Sync is currently embedded in Repo, but will be made available
+     separately in the future.
+
+     Sync is started automatically when Repo starts unless configured otherwise.
+
+     See the man page for SyncTest in doc/manpages/SyncTest.1.html for more
+     information about Sync, and how to use SyncTest, a command line tool for
+     testing Sync and creating collections.  See
+     doc/technical/SynchronizationProtocol.html for a description of the CCNx
+     Create Collection Protocol and the internal protocol used by Sync Agents
+     in neighboring nodes to keep their collections in synchrony.
+
+  * The default for a RepositoryFlowControl has changed from allowing any
+     Repository to answer to requiring only a local (connected to the same ccnd
+     as the application) Repository.
+
+     Direct users of the RepositoryFlowControl class can control the behavior
+     through a (previously present) boolean in the constructor.
+
+     Users of CCNNetworkObject can still control the local/non-local behavior
+     through the SaveType REPOSITORY (allows non-local Repositories) and
+     LOCALREPOSITORY.
+
+     The SystemConfiguration option FC_LOCALREPOSITORY is unchanged and can
+     still be used to force a local Repository. It cannot force permission to
+     use a non-local Repository.
+
+     ccnputfile/ccnputmeta has been updated to have an -allownonlocal option.
+     The default behavior has also changed to require a local Repository if no
+     command-line option is given.
+
+  * Issues Resolved:
+	* Feature 100112 Repo requires data storage in memory - this is unscalable
+	* Feature 100140 java library should have option of quitting when no ccnd
+	* Feature 100202 Rename ccnget and ccnput command line programs
+	* Bug 100315 CCNNetworkManager does not check semaphore timeout
+	* Bug 100376 CCNNetworkManager ignores semaphore return
+	* Feature 100407 Change BinaryXMLDictionary usage to an interface
+	* Feature 100427 CCNNetworkManager should not dispatch callbacks via separate
+		threads
+	* Bug 100445 ccnx.dtd missing Label elements (fixed in v0.4.2)
+	* Bug 100487 ccnx 0.4.0 does not install with /usr/local/<lib, bin,
+		include> missing
+	* Bug 100495 Cleanup Dos Newline ^M for target v0.4.1 (fixed in v0.4.1)
+	* Feature 100498 A new DTAG needs to be added for Sync.
+	* Feature 100500 Add java support for sync component
+	* Feature 100517 Junit tests should delimit themselves in the log file
+	* Bug 100524 libccn self-registration timeouts need adjusting
+	* Bug 100532 CCNVersionedOutputStreamTest does superfluous stackdumps
+	* Feature 100536 Java callback interfaces should have more intuitive names
+	* Feature 100537 Java interest callbacks should honor the boolean return
+	* Bug 100542 Lack of atomicity in cancelInterest
+	* Feature 100554 Improved wire encoding of type/value pairs
+	* Bug 100564 Name enumeration can miss quickly inserted content
+	* Bug 100565 Problems in NameEnumerationTest
+	* Feature 100572 Add a FAC_TEST and use this in test logging
+	* Bug 100577 test.io.StreamTest unused
+	* Feature 100578 New c implementation of ccn repository
+	* Feature 100579 Repository-based sync
+	* Bug 100580 The distributed ccn_repo documentation has missing and incorrect
+		information (documentation)
+	* Support 100581 Update readme to provide the dependencies for Mac OS X and
+		Linux (documentation)
+	* Feature 100584 Remove remnants of no longer valid interest refresh decay
+	* Bug 100585 Interest suppression test failures
+	* Bug 100586 README for Android support out of date (documentation)
+	* Bug 100587 @Override causes compile error in java 1.5
+	* Bug 100588 CCNNetworkManager.get() may take InterruptedException and not
+		unregister the interest.
+	* Bug 100589 CCNxRepoService can not start on android 3.1
+	* Bug 100590 New repo tests confused by presence of other processes
+	* Bug 100591 Java netmanager must compensate for _registrationChangeInProgress
+		not allowing interrupts
+	* Bug 100592 Synchronization error in InterestTable
+	* Feature 100593 Do better job of logging failures in log test
+	* Feature 100594 More pipelining pieces can be removed due to new netmanagers
+	* Bug 100595 EnumeratedNameListTest fails randomly due to bad randomization
+	* Bug 100596 RepoIOTest can hang
+	* Bug 100599 NameEnumeration calls back user defined handler while holding a
+		lock
+	* Bug 100600 NameEnumeratorTest has synchronization errors
+	* Bug 100601 ccnseqwriter usage information is incomplete
+	* Bug 100602 Some CCNNetworkObject logging is missing facility
+	* Feature 100603 Improve logging of failed verifications in java repo
+	* Bug 100604 ccn_run commands don't have documentation for -debug and -javaopts
+		(documentation)
+	* Support 100609 Develop CCNx Repository protocols doc (documentation)
+	* Support 100610 Prepare for ccnx-0.5.0 release
+	* Feature 100611 LatestVersionTest should use logging instead of println to save information
+	* Bug 100612 ContentObject.html has two references to xsd.html where one should
+                  be a reference to dtd.html (documentation)
+	* Bug 100613 Remove unused comments and code in the java source referring to
+		the abandoned ACK protocol
+	* Bug 100614 Fix or remove ccn_btree_prev_leaf
+	* Feature 100615 Create a command-line utility to initialize a
+		.ccnx/.ccnx_keystore
+	* Bug 100616 ccn_keystore_file_init keystores don't exactly match either the
+		Java created keystores or the openssl command generated keystores.
+	* Bug 100618 ccnseqwriter should wait longer for repository response
+	* Bug 100620 CCNFlowControl has logs with missing facility
+	* Bug 100623 ccn_run can wait longer than the timeout
+	* Bug 100625 make test fails on Mac OS X 10.7 (lion) in test_btree_prev_leaf
+		because grep says "regular expression too big"
+	* Bug 100626 CCNx Android apps should be set to use repo2 by default
+	* Bug 100627 NameEnumeratorTestRepo timeout too low
+	* Bug 100628 Wireshark README needs to be updated (documentation)
+	* Feature 100630 Change how the Merkle tree gets bytes to digest
+	* Feature 100632 Infrastructure and use of class to simplify use of threadpools
+		for content or interest handlers when necessary
+	* Feature 100633 Increase priority of netmanager thread
+	* Bug 100634 Remove lint identified by clang checker
+	* Feature 100635 Put top-level CCNx README in MarkDown format (documentation_
+	* Bug 100636 CCNxChat can not send message on Android 3.1
+	* Feature 100637 RepositoryFlowControl, and command line programs that write to
+		repositories, should default to scope 1
+	* Bug 100638 ccnr sync options need to be renamed
+	* Feature 100640 ccnr could use option to limit processing of start-write
+		commands to those with a given scope
+	* Bug 100641 Bad length given to memcpy in IndexSorter_Add
+	* Bug 100644 Merge csrc/lib2 into csrc/lib
+	* Bug 100646 Android CCNx service control - screen layout is too large for Galaxy S
+	* Bug 100648 Java CCNx does not work out of the box on NetBSD 5
+	* Bug 100649 Increase timeout for end to end tests in build.xml
+	* Bug 100650 Problems with DeprecatedInterfaceTest
+	* Bug 100652 Windows 7 Cygwin build fails during build of ccndumppcap
+
+Changes between 0.4.1 and 0.4.2:
+--------------------------------
+This highlights some important changes since the most recent numbered release.
+Refer to http://redmine.ccnx.org/projects/ccn/versions/3 for more details on
+CCNx 0.4.2.
+
+  * Issues Resolved:
+	* Feature 100371 Implement marshalling/unmarshalling for Link objects
+	* Bug 100426 test_spur_traffic fails in a FreeBSD jail (Workarounds are
+	  documented in csrc/README.freebsd.)
+	* Bug 100509 LocalCopyTestRepo has a "silent" failure
+	* Feature 100516	CCNVersionedInputStreamTest should use standard flosser
+	* Bug 100534 -timeout option in utilities is broken
+	* Feature 100545 Add an averaging counter to CCNStats
+	* Bug 100546 ccncat should fflush output
+	* Feature 100547 ccn_seqwriter needs method to set min/max block sizes when
+				 fixed block sizes are required
+	* Feature 100548 CCNTime should cache its binaryTime
+	* Feature 100550 PROP_BLOCK_SIZE should be settable via an environment
+				 variable
+	* Feature 100551 ccn_run should allow arbitrary setting of properties
+	* Feature 100552 InterestTable should use a Comparator
+	* Feature 100553	Don't use BigInteger for byte array conversion
+	* Feature 100561 repo should save associated keys along with the file on
+				 normal file writes
+	* Feature 100562 Allow deferred verification in libccn
+	* Bug 100567 RepoNameEnumeratorTest should be able to handle new names same as
+				 old
+	* Bug 100570 Could use charbuf creator that doesn't initialize buffer to zero
+	* Feature 100571 Make it easy to avoid realloc() as it confuses MacOSX memory
+				 leak detector
+	* Bug 100573 Excessive neighbor-check interests
+	* Bug 100575 java input streams don't honor NO_TIMEOUT
+	* Bug 100583 Android apps for CCNx should work with modern Android SDK
+				(r13-r15, see android/README.build for details)
+
+
+Changes between 0.4.0 and 0.4.1:
+--------------------------------
+This highlights some important changes since the most recent numbered release.
+Refer to http://redmine.ccnx.org/projects/ccn/versions/2 for more details on
+CCNx 0.4.1.
+
+  * The ant features used to process properties, -D<property>=<value> do not work with
+	ant 1.7.1.	If you have not done so already, you need to
+	update to ant 1.8.2.  Update in supported Ant version is reflected in README.
+  * Proper args for using the 'ccn_repo signal' command is reflected in README.	
+  * Issues Resolved:
+	* Feature 100203 Rename updateheader command line program
+	* Feature 100224 Deprecate backward-compatibility support for older header
+				 profile
+	* Bug 100250 InterestMessage.txt section on Exclude incomplete
+	* Feature 100261 Inline documentation for ThumbnailProfile should be improved
+	* Feature 100333 CCNReader.isContentInRepository should use repo sync protocol
+	* Support 100336 The ./README file needs updating
+	* Bug 100381 KeyValuePair used in HashSet without defining hashCode()
+	* Bug 100457 LatestVersionTest does not work as expected
+	* Feature 100459 Junit tests should not set log levels individually
+	* Bug 100471 CCNFlowServerTest should use AssertionThreadRunner
+	* Bug 100472 Repo namespace argument doesn't check old namespace
+	* Bug 100474 CCNNetworkObject logging should use FAC_IO
+	* Bug 100475 Spelling errors
+	* Bug 100482 Bad timing causes duplicate repo listeners
+	* Bug 100483 jot stub script should use seq if it exists
+	* Bug 100484 Timing window in flow control
+	* Bug 100485 InterestTable add without capacity set leaks memory
+	* Bug 100486 Java unregister prefix needs to reregister other prefixes
+				 sometimes
+	* Bug 100488 PrincipalKeyDirectory can access uninitialized method variables
+	* Bug 100489 Verification failures on recent versions of Android
+	* Bug 100493 ccnchat uses more handles than necessary
+	* Feature 100496 Need a (C library) routine to check whether a ccn_upcall_info
+				 describes the final block
+	* Bug 100497 ccnls could use option to set scope on generated interests
+	* Bug 100501 C library needs ability to create CCNx keystore
+	* Feature 100502 ccn_seqwriter needs method for getting filename
+	* Feature 100505 ccnget should have flag to allow retrieval of unverified
+				 content
+	* Bug 100506 Environment variable problems when running multiple tests
+	* Bug 100507 CCNOutputStream doesn't deregister prefixes on close
+	* Bug 100508 CCNNetworkObject does unneccessary prefix registration via flow
+				 controller
+	* Bug 100510 RepoIOTest adds extra nonce in policy change test
+	* Support 100511 Add runtime flag to change version of repo used in junit test
+				 framework
+	* Bug 100512 Problems with NetworkTest
+	* Bug 100513 Cleanup javasrc to match new handling of C library keystore
+				 creation
+	* Bug 100514 need utility to extract names from a file of ccnb encoded objects
+	* Bug 100515 EndToEndTest needs to wait for both programs to startup
+	* Bug 100518 Memory leak in libccn handle_key
+	* Bug 100520 Key-fetching in libccn needs hardening
+	* Bug 100521 java prefix registration waiting needs cleanup
+	* Bug 100522 Random log test errors on some platforms
+	* Bug 100523 verifications randomly fail running under Android Gingerbread
+	* Bug 100527 Infrequent Scope 2 Failures
+	* Bug 100529 Java interest handling needs to parse InterestLifetime
+	* Bug 100530 advancePipeline should not loop after closed handle
+	* Feature 100533 Show interest scope in ccnd log
+	* Bug 100538 Install ccnsimplecat program
+	* Feature 100535 Add the ability to set a default scope on a CCNHandle.
+	* Feature 100541 ccnnamelist should be able to read from a pipe as well as mmap accessible files
+	
+Changes between 0.3.0 and 0.4.0:
+--------------------------------
+Refer to http://redmine.ccnx.org/projects/ccn/versions/1 for more details on
+CCNx 0.4.0.
+
+  * The 'ping' responder in ccnd is deprecated. For compatibility, it is still
+	present by default, but further use should be phased out. The libraries
+	have been changed to use local service discovery instead. The java option
+	"org.ccnx.ping.timeout" is replaced by "org.ccnx.ccndid.timeout".
+	(100187, 100188, 100189)
+  * Responsibility for key saving has been shifted from the client library to
+	repo. The Java API did not change but, as the result of a protocol change,
+	the new library is not compatible with the old repo. (100288)
+  * The Java library now uses TCP to communicate with ccnd, rather than UDP,
+	to avoid problems and inefficiencies caused by UPD packet drops. (100078)
+  * An explicit lifetime element has been added to Interest messages in order
+	to give applications control of their timeouts. (100127)
+  * FlowControl addNameSpace is now logged at info in the constructor. (100180)
+  * ContentObjects are now created earlier to improve throughput by more
+	efficiently balancing tasks between different threads. (100197)
+  * Performance of writes has been improved by avoiding copies when the
+	application is only calling write with integral multiples of the segment
+	size. (100206)
+  * The ccnseqwriter command has been installed and documented. (100227)
+  * The traffic meters in the ccnd status display have been improved by
+	metering activity in both directions, splitting out by content/interest,
+	and showing rates as well as totals. (100256)
+  * Android ccnChat uses a multicast interface by default, which does not work
+	well in the emulator. To address this, an option to use a point-to-point
+	face has been added to the configuration screen. (100267)
+  * A sequence number has been added to each packet, encoded so that it is
+	distinguishable from interest and content packets, that allows the
+	receiving side to detect missing packets. (100275)
+  * The CommonOutput doPut() method now returns the version written so command
+	line utilities know the version name just created. In addition, logging in
+	the while() loop in do_write has been isolated for improved performance.
+	(100276)
+  * java.library.path and -Xcheck:jni are now forwarded to daemon (100279)
+  * Stream access for CCN segments has been added to the C library. (100283)
+  * Support was added to the library for splitting an interest when the
+	exclusion list gets too big. (100290)
+  * The ccncat command was converted to use the ccn_fetch library in order to
+	take advantage of pipelining. (100291)
+  * Efficiency of flow controller was improved with more fine grained locking.
+	(100299)
+  * Counters were added to the CCNNetworkManager to facilitate debugging.
+	(100300)
+  * stats and clearstats signals were added to Repo. (100302)
+  * A categorized statistics interface was added. (100306)
+  * The efficiency of getRegisteredPrefix was improved. (100309)
+  * An example of ccnb encoding of a data packet payload in Java was created.
+	(100312)
+  * The KeyDirectory class was split into a KeyDirectory base class and a
+	PrincipalKeyDirectory subclass to make the KeyDirectory structure
+	available for purposes other than Access Control. (100316)
+  * The HTTP proxy demo code was added. (100322)
+  * The performance of ContentName.fromURI() was improved. (100323)
+  * Facility-based logStackTrace and logException methods were added. (100326)
+  * Additional tests were added to verify that the InterestListener continues
+	to auto-refresh the interest even when an InterestFilter for the same exact
+	name as the InterestListener is closed on the same handle. (100327)
+  * Performance was improved for ContentName.componentParseURI(). (100331)
+  * A StatusResponse message type was added to allow such things as an error
+	response for prefix registrations. (100341)
+  * CCN_FORW_TAP was added to repo prefix registration. (100342)
+  * Repo no longer unnecessarily uses multiple Interest handlers. (100343)
+  * Implemented more useful interactions between forwarding flags. In
+	particular, the definition of CCN_FORW_TAP includes the provision that it
+	is not subject to capture, and flags that have an effect on the prefix as a
+	whole (including CCN_FORW_CAPTURE) do not change behavior depending on the
+	setting of CCN_FORW_ACTIVE. (100345)
+  * Synchronization in InterestTable was improved. (100353)
+  * CCNNetworkManager was updated to limit thread creation for handlers.
+	(100354)
+  * The following enhancements were made to ccntestloop: (100356)
+	- Accumulate testout directories outside of javasrc
+	- Read config via script
+	- Handle start/stop/restart/status verbs
+	- All output to files (when using start verb)
+	- Handle kill better
+	- Record pid
+	- Allow configuration of port range
+  * Instances of ccnd are now allocated dynamically to allow more testing
+   flexibility. (100363)
+  * The log command in utilities now sets the level for all facilities.
+	(100364)
+  * Java interest handling code now has a log facility. (100366)
+  * A Java library routine that sets the ccnd caches stale has been created to
+   ensure that readbacks are actually from repo and not from the cache.
+	(100367)
+  * Logging between CCNNetworkManagers and CCNNetworkChannel has been made
+	unique. Note that there is no relationship between CCNNetworkManager ids
+	and Channel ids. (100432)
+  * openssl for Android builds are now based on 1.0.0d. (100438)
+  * ccnChat was updated to publish its keys under the chat channel namespace.
+	(100439)
+  * A testing framework was added to make assertions in child threads
+	catchable. (100454)
+  * ccnd is now able to sense the presence of other end (i.e., to distinguish
+	between loss of connection and simple lack of incoming data). (100461)
+  * Added a junit to check that prefixes are as expected in the FIB when
+	doing localRepoSync. (100464)
+  * [Support] Instructions in the README for ccnchat were enhanced. (100338)
+  * [Support] Description of forwarding flags used in
+	 ccn_set_interest_filter_with_flags (100467)
+ 
+  * Issues Resolved:
+	* Bug 100091 Long running java applications can't recover from ccnd restart
+	* Bug 100094 infinite loop building wireshark plugin
+	* Bug 100196 SecureKeyCache debug output incorrectly describes output
+	* Bug 100199 Incorrect values of DEFAULT_DIGEST_LENGTH
+	* Bug 100201 Missing man(1) pages
+	* Bug 100205 make "test-alone" target less dependent on name resolution
+	* Bug 100209 Too much processing of interests in repo
+	* Bug 100219 make test for csrc fails if CCN_LOCAL_PORT is set
+	* Bug 100241 ccnd answers success before tcp connection completes
+	* Bug 100247 ccnchat -text should exit on end-of-file
+	* Bug 100253 Storing getopt() result as char instead of int
+	* Bug 100254 KeyManager reports "initialization of BouncyCastle provider
+				 did not proceed properly"
+	* Bug 100255 Typo in doc/technical/InterestMessage.txt
+	* Bug 100257 Error messages from ccndc are inscrutable
+	* Bug 100258 ccndc should honor CCNX_DIR for locating keystore
+	* Bug 100259 Code to avoid double syncs doesn't actually avoid double syncs
+	* Bug 100260 Metadata profile getLatestVersion
+	* Bug 100262 Do not default to 224.0.23.170:9695 for multicast
+	* Bug 100264 ccndstatus shift bug
+	* Bug 100265 Clean build fails on android
+	* Bug 100266 ccn_ccnbtoxml fails to detect unreasonable attr/blob length
+	* Bug 100268 Null fault in ccn_parse_interest
+	* Bug 100269 CCNx Java library should not use Log.severe unless it's
+				 reporting a severe problem.
+	* Bug 100270 CommandMarker.binaryArgumentStart duplicates work if it fails
+	* Bug 100271 Fix some small inefficiencies in ContentName and DataUtils
+	* Bug 100272 reduce calls to count() in InterestTable.compareTo
+	* Bug 100274 Remove ccnd_internal_client_reschedule()
+	* Bug 100277 ccnbx usage inconsistent
+	* Bug 100278 Cleanup PlatformTest junit
+	* Bug 100280 repo version information should be separate from the DB
+	* Bug 100281 repo should not extend CCNHandle for internal gets
+	* Bug 100284 ccnchat no longer builds on Mac OS X 10.5
+	* Bug 100285 LinkObjectTestRepo can pull wrong data
+	* Bug 100286 Some net manager related routines still don't use isLoggable
+	* Bug 100287 Repo should check for command markers more efficiently
+	* Bug 100292 Null fault in handle_prefix_reg_reply()
+	* Bug 100293 latest version test can fail intermittently
+	* Bug 100294 wireshark plugin uses wrong FT/BASE combination for signature
+				 field
+	* Bug 100296 MLAC distinguishing hashes are different for same name
+	* Bug 100298 prefix registration timing error
+	* Bug 100303 ccn_fetch code needs to deal with non-fixed block streams
+	* Bug 100304 ccnd notice.txt responder needs to start even if interest has
+				 CCN_AOK_NEW unset
+	* Bug 100305 Signed BigInteger in VersioningProfile problems
+	* Bug 100307 VersionNumber uses Arrays.copyOf
+	* Bug 100310 Adjust log level of message that says javalib is using TCP
+	* Bug 100314 Races in csrc test scripts
+	* Bug 100317 Format string error in ccn_fetch.c
+	* Bug 100318 ccncat loops if ccnd is shut down
+	* Bug 100319 Standard tests run test.profiles.ccnd tests twice
+	* Bug 100320 TreeSet6 init problem
+	* Bug 100324 Incorrect synchronization in CCNNetworkObjectTest causes
+				 random errors
+	* Bug 100325 Log.getLevels array copy
+	* Bug 100329 Make ccnd + apps runnable inside a FreeBSD jail
+	* Bug 100330 Add CCND_LISTEN_ON to export list in ccndstart script
+	* Bug 100334 const error in ccn_fetch.c
+	* Bug 100335 InterestEndToEndUsingPrefixTest has bad sycnchronization
+	* Bug 100337 Set _localPort correctly in CCNNetworkManager to avoid
+				 bogus messages
+	* Bug 100339 Test for repo sync can fail intermittently
+	* Bug 100340 repo NE responses
+	* Bug 100344 Looping on some java platforms
+	* Bug 100346 org.ccnx.ccn.test.protocol.ContentNameTest takes too long
+	* Bug 100347 repo sync doesn't sync linked keys correctly
+	* Bug 100348 NetFetch should not use fields not in Solaris
+	* Bug 100350 CCNNetworkManager setupTimers should be synchronized
+	* Bug 100351 Interest table creates unnecessary objects
+	* Bug 100352 CCNNetworkManager should log when it throws away a
+				 ContentObject
+	* Bug 100357 Close file handles
+	* Bug 100359 CCNx Access Control Specification missing
+	* Bug 100360 Useless code in Daemon.java
+	* Bug 100362 test_spur_traffic fails on Solaris when ipv6 is enabled
+	* Bug 100365 Code cleanup for profiles.versioning
+	* Bug 100368 test_scope2 failures
+	* Bug 100369 Incorrect throw in CCNNetworkChannel causes compile error
+	* Bug 100370 Access control tests fail after KeyDirectory refactoring
+	* Bug 100373 NetworkKeyManager duplicates _handle
+	* Bug 100375 null value in CryptoUtil.java
+	* Bug 100377 FaceManager.FaceInstance.toFormattedString incorrect
+	* Bug 100378 CCNNetworkChannel uses improper synchronization on Boolean
+	* Bug 100379 ACLTable uses new Boolean(...)
+	* Bug 100383 Rationalize line endings in sources
+	* Bug 100384 HttpProxy only builds with native openssl
+	* Bug 100386 ccnputfile reports "Cannot read file."
+	* Bug 100387 Compilation warnings on Ubuntu Linux
+	* Bug 100388 CCNx-Android-Services is missing default.properties
+	* Bug 100389 Cleanup code in profiles.ccnd
+	* Bug 100390 CCNxWrapper needs locking
+	* Bug 100391 Error in InterestEndToEndUsingPrefixTest leads to intermittent
+				 failures
+	* Bug 100392 Unnecessary floating point calculations in MerkleTree
+	* Bug 100393 LogStructRepoStore synchronizes on Integer
+	* Bug 100395 CCNNetworkObject improper finalize
+	* Bug 100398 Remove deadlocks from VersioningInterest
+	* Bug 100399 CCNHandle uses broken double-checked lock
+	* Bug 100401 CCNFlowController.UnmatchedInterest should be static
+	* Bug 100402 Various Repo inner classes should be static
+	* Bug 100403 CCNAbstractInputStream$IncomingSegment should be static
+	* Bug 100404 CCNNetworkManager uses wait without a loop
+	* Bug 100405 SystemConfiguration circular initialization with Log
+	* Bug 100408 InputStreams should use the default verifier
+	* Bug 100412 CCNAbstractInputStream locking
+	* Bug 100414 CCNNetworkManager uses improper synchronization on Boolean
+	* Bug 100415 CCNAbstractInputStream - wrong ContentObject in matching
+				 interest check
+	* Bug 100416 InputStreams do not verify all incoming content
+	* Bug 100418 CCNNetworkManager getRegisteredPrefix can miss direct prefixes
+	* Bug 100419 CCNNetworkChannel needs to close ReadSelector
+	* Bug 100420 PrefixRegistrationManager needs to protect against subclassed
+				 ContentName
+	* Bug 100421 Logging in PublicKeyCache does not use facilities
+	* Bug 100422 Self-registration should be allowed from a DC face
+	* Bug 100423 Intermittent failures in RepoIOTest testLocalSyncInputStream
+	* Bug 100424 Track VLC change for access_t psz_path/psz_location fields
+	* Bug 100425 Android startup slow
+	* Bug 100429 Parameterized logging fails when parameter is at the start of
+				 the string
+	* Bug 100430 Android CCNxServiceControl has problem with async startup
+	* Bug 100431 CCNNetworkChannel and no ccnd
+	* Bug 100433 Rationalize treatment of apps by top-level Makefile
+	* Bug 100434 FaceManager not prepared for StatusResponse in place of
+				 FaceInstance
+	* Bug 100435 CCNHandle should not create new NetworkManager
+	* Bug 100437 Calling CCNHandle.getHandle() results in 2 CCNHandles and 2
+				 Network Managers being created
+	* Bug 100440 Intermittent error in LastSegmentTest
+	* Bug 100444 reset processing segment if content object is dropped
+	* Bug 100447 Daemon start needs to pass java.library.path to daemon
+	* Bug 100448 Inefficient coding in InterestTable
+	* Bug 100449 null pointer in delivery thread for CCNAbstractInputStream
+	* Bug 100450 Incorrect use of wait in tests
+	* Bug 100451 LocalCopyWrapper potential deadlocks
+	* Bug 100452 vlc plugin compilation on ubuntu 10.04 x64 fails
+	* Bug 100453 RepositoryFlowController condition variable
+	* Bug 100455 CCNFlowControlTest should use ThreadAssertionRunner
+	* Bug 100458 Remove dead code from RepositoryFlowControl
+	* Bug 100460 Cleanup of Waiter
+	* Bug 100463 CCNFlowControl shouldn't sync on unmatchedInterests
+	* Bug 100465 Access control tests fail with handle problems
+	* Bug 100466 BasicKeyManager should recreate its handle when needed
+	* Bug 100468 Preserve real git status in gitwrap
+	* Bug 100469 file input stream skip and seek cause pipelining errors
+	* Bug 100473 wireshark plugin does not work with tcp
+	* Bug 100476 Mac OS X build fails using gcc4.2.1+Mac OS X Kernel10.7.3+
+				 fink on linker stage of csrc
+	* Bug 100479 RepoIOTest saves default key to repo incorrectly
+
+Changes between 0.2.0 and 0.3.0:
+--------------------------------
+ 
+  * Android support. This release includes support for Android 2.1 platform 
+	development. (100246)
+  * Self-registration protocol. This functionality allows clients to register
+	the prefixes for interests they wish to receive. (100071, 100072, 100073) 
+	The old form of self-registration (operating on the prefix 
+	ccnx:/ccnx/reg/self) has been removed. (100114)
+  * Prefix registration on incoming connections. For a ccnd to act as a hub
+	(as in a hub-and-spoke configuration) there needs to be a way to get prefix
+	registration on incoming connections. Eventually, routing agents will 
+	perform this operation. This implementation retains the 'flooding' behavior
+	of earlier releases for selected prefixes. NOTE: this requires explicit
+	additional configuration via CCND_AUTOREG setting. (100225)
+  * ccnd_destroy(). This functionality provides improved flexibility beyond 
+	exit() to free up all resources. (100051)
+  * destroyface(). Implementation of the previously documented functionality.
+	(100068)
+  * ccnChat improvements:
+	* This release changes ccnchat() to display user friendly names instead 
+	  of partial key digest (100214). 
+	* ccnchat is refactored to be re-usable, called from the ccnChat.java GUI 
+	  and the ccnChatNet.java module. It is also available on the command line:	 
+		 bin/ccnchat -text namespace 
+	  (100234). 
+	* ccnchat now verifies the first packet: if verification fails, it rejects
+	  that version and looks for a later one. (100163)
+  * Performance improvements in CCNNetworkObject. This release includes a 
+	revamp of the network objects including a few major API changes (100088): 
+	* Write constructors create flow controllers at construction time, leaving
+	  lazy creation for read constructors. Write constructors make/take a FC 
+	  start listening for interests for their base name immediately (if they
+	  know it) 
+	* The repository is the default behavior for network objects, rather than
+	  "raw".
+  * Support a customized DTAG dictionary. This release changes the 
+	ccn_ccnbtoxml and ccn_xmltoccnb tools so that a customized dictionary could
+	be provided at runtime; this enables the tools to be used for protocols 
+	that live outside of the CCNx base. (100129)
+  * Key naming. This release defines the KeyProfile (100055) and uses it for 
+	key ids, guids, and other component types (100131).	 This change is 
+	incompatible with existing header naming; backward compatibility is enabled
+	by default. 
+  * Still-pending interests behavior. This release changes how ccnd keeps track
+	of the outbound faces for an interest. In the new representation, 
+	pe->outbound is kept in send order instead of the reverse, and the new 
+	index pe->sent is advanced as the faces are used. This leaves a trail of 
+	the faces that have been used already, giving more flexibility in altering 
+	the outbound list to the right of pe->sent. (100103)
+  * Repository publishes public key. Any app that wants to depend on name 
+	enumeration, checked writes, etc, needs to be able to validate who a 
+	repository is. This release includes publishing the repository key using 
+	localhost key discovery, making it easier to configure where the repository
+	publishes its key. (100144)
+  * javax.xml streams. Removed as many dependencies as possible such that their
+	use is isolated to the text xml encoder/decoder. (100053)
+  * Access control to stream/object encryption. The access control system 
+	allows you to assign keys to content/recipients, and automatically retrieve
+	keys. In this release, the output and input streams (and the network 
+	objects that use them) retrieve keys and automatically encrypt content. 
+	(100063)
+  * Bulk import to repo. This release supports bulk importing of a sequence of 
+	content objects (data) from a file in a single operation. The file must 
+	contain content objects in wire format. The repository can incorporate the 
+	file as a new storage file directly if that is compatible with its store 
+	format. (100210)
+  * Local repo save and save-type override. This release supports objects and 
+	streams to be written to a local (same device) repo (100213). In addition, 
+	it implements an environment variable to allow objects to be saved in a 
+	local repository even if they were generically coded to be written to 
+	any/multiple repos (100223).
+  * Localhost tcp peers considered friendly. Now ccnd considers tcp connections
+	from localhost to be "friendly" and only considers incoming localhost udp 
+	traffic to be "friendly" if it starts out with a heartbeat packet. (100120)
+  * Next-neighbor scope. For applications that want to be assured that they are
+	communicating only with immediately neighboring machines, this release 
+	defines a new allowed Scope value in the interests. (Scope = 2) (100123)
+  * EnumeratedNameList methods. This release includes methods to replace 
+	deprecated methods in EnumeratedNameList. (100230)
+  * Capture-prefix flag. In the FIB, if a shorter registration has the 
+	CCN_FORW_CHILD_INHERIT set, a registration for a longer match can't be used
+	to prevent the interest from being propagated. This release includes a flag
+	that can be applied on the longer prefix to override the effect of 
+	CHILD_INHERIT on the shorted prefixes. (100116)
+  * Prefix registration using a ContentName. In this release, the 
+	PrefixRegistrationManager accepts a ContentName object for the prefix to 
+	register in addition to a URI encoded string. (100186)
+  * Multicast traffic. ccnd is now able to set up multicast using the standard
+	ccnd socket. This involved changing the way ccnd keeps track of the sending
+	side when the multicast cannot be done using a single socket. Instead of
+	keeping 2 fds per face, ccnd now keeps 1 fd and a faceid to be used for 
+	datagram sends. Because the faceids are never reused, the bookkeeping 
+	becomes simpler.
+ A user-visible side effect of this is that there are now 
+	faces visible in the status display that are not used for ccnx traffic. 
+	These represent the stream listeners and the datagram sockets that are 
+	shared among other faces. They carry the face flag CCN_FACE_PASSIVE. 
+	(100135)
+  * Timeouts. Timeouts are now settable for situations which may require longer
+	than usual timeouts. (100153)
+  * Key cache. You can set a variable to control whether or not to save/load 
+	the key cache. This variable is set to false by default. (100154)
+  * ccn directory location. libccn now uses the CCNX_DIR environment variable.
+	(100026)
+  * Compatibility with openssl-1.0.0beta4 and following. ccn is now compatible
+	with the STACK_OF macro and related changes in the OpenSSL code. (100095)
+  * Local service discovery protocol. This release introduces the 
+	CCN_FORW_LOCAL forwarding flag. The presence of this flag in a FIB entry 
+	marks the namespace as local to the host (more specifically, to apps 
+	directly connected to the ccnd in question). This is in support of 
+	implementing a host-local namespace useful for local service discovery. 
+	The ccnd does its best to make sure that content within such a namespace 
+	comes only from local apps, and is delivered only to local apps.
+	There is one known flaw in the current implementation, namely that an 
+	off-machine attacker could cause a stale content object in the local 
+	space to become fresh again. To do this, the attacker would have to 
+	already have a copy of the C.O., which was supposed to be machine-local.
+	Thus there must also be some collusion going on for this to happen. 
+	(100134)
+  * Logging changes. This release includes a number of changes to logging 
+	configuration and content:
+	
+* Log messages use the facility name for the logger name instead of 
+	  org.ccnx.ccn.CCNHandle for everything. This change makes it easier to
+	  find specific facility related messages in large log files. The 
+	  DEFAULT_APPLICATION_CLASS must be a prefix in the Logging namespace of
+	  the other loggers so that they inherit the handlers added to it. (100185)
+	
+* ccntestloop now keeps logs for failed runs and the last few successes, 
+	  and deletes the rest. (100220) 
+	
+* This release allows you to reduce the number of messages produced by 
+	  ccndstart.sh: specify CND_LOG for ccndstart so ccndstart will discard 
+	  messages about stuffing the cache. (100069) 
+	
+* Stream open/close events are now logged. (100181)
+	
+* FAC_USERxx facility names include more complete logging. (100183)
+
+  * Many small bug fixes to address issues with tests.
+  * Clarity and documentation: The RepositoryDataListener method and variable 
+	names better reflect the current functionality (100216); there is now a 
+	manpage entry for ccndstatus (100232).
+  * Interests. Bugs fixed for interest handling behavior include:
+	
+* Repo generating new responses to ccnls interests (100102)
+
+	* Java library sending explicit AnswerOriginKind in interests, using the 
+	  default value (100106)
+	
+* Change default behavior for ccnput command to wait for interest (100117)
+	
+* ccnd occasionally retransmits interest (spurious interest re-expression 
+	  fixed) (100121)
+	
+* ccnd can occasionally fail to remove interests from prefix table 
+	  (100226)
+
+  * Pipeline fixes. The release includes the following fixes in the area of 
+	pipelining data segments:
+	
+* MetadataProfile getLatestVersion() will no longer append a version based
+	  on the current time if there is no version found in the network in the 
+	  passed-in timeout (100233)
+	
+* Pipeline code sent the first segment interest when version was not known
+	  yet (100141)
+	
+* Pipelining initialization problem: Some timing circumstances caused 
+	  pipelining to hang (100194)
+
+	* Repo pipelining now issues new interest before processing received 
+	  content
+failed verification and advancing the pipeline (100221)
+
+  * Streaming fixes. The release includes the following fixes in the area of
+	streaming data:
+	
+* CCNAbstractInputStream now uses Long instead of String for readerReady
+	  (100204)
+	
+* NullOutputStream now provides byte string methods to reduce call 
+	  overhead (100212)
+	
+* Input streams now call close() and close() shuts down pipelining and 
+	  closes any headers that might be retrieved (or attempted). (100235)
+
+  * ccn_resolve_version(). The exclude filter is now fixed to always return the
+	highest version; ccn_resolve_version() returns quickly if a version is 
+	already present.
+  * Repo FreshnessSeconds. This release increases the FreshnessSeconds on
+	repository startWrite() response to 12 sec from 1 sec so transactional data
+	are not held for a long time in ccnd. (100139)
+  * Issues Resolved:
+	* Bug #100012 java ContentObject code calculates digest on content only
+	* Bug #100018 content explorer takes exception when there is no repo
+	* Bug #100044 ccnget -c returns incorrect status
+	* Bug #100061 ccnd Exclude processing needs performance improvement
+	* Bug #100066 unsolicited content should not cause ccnd to toss good 
+				  content
+	* Bug #100074 ccn_initkeystore.sh fails if $USER is not set
+	* Bug #100076 Use of $$ in csrc/tests/test-* considered harmful
+	* Bug #100085 ccnchat doesn't work with java 1.5 by default
+	* Bug #100090 Java ContentType definition for ENCR does not match the one 
+				  in ccn.h
+	* Bug #100093 seg fault in ccndc
+	* Bug #100098 ccnchat gets illegalArgumentException for empty line
+	* Bug #100099 Implement unreg action in ccnd - unregister prefix
+	* Bug #100108 Some system loggers can't handle log parameters
+	* Bug #100109 Java prefix registration should not use interest nonces
+	* Bug #100110 ccnd blocks when attempting a connect
+	* Bug #100113 ccnd does not allow clearing of flags in FIB
+	* Bug #100124 Logging can cause repository to deadlock
+	* Bug #100126 Java header creation inconsistent with ccnx.xsd header schema
+	* Bug #100130 ccnsendchunks / ccncatchunks block size problems
+	* Bug #100136 Nonce-based interest suppression in ccd is incomplete
+	* Bug #100137 The handling of responses from the ccnd internal client does
+				  not cope with multiple messages in the buffer, causing them 
+				  to be discarded.
+	* Bug #100151 All Repo related logging should use FAC_REPO
+	* Bug #100176 EnumeratedNameList.getNewData only gets data once
+	* Bug #100179 ServiceKeyDiscoveryTest hardwires data writing into "."
+	* Bug #100184 getLatestVersion resets the attempt time
+	* Bug #100191 Java ForwardingEntry object validation is incorrect
+	* Bug #100200 The constructor for PublisherPublicKeyDigest(String) should 
+				  raise an exception if the string is not a proper base64Binary
+				  encoding. Both that and the PublisherPublicKeyDigest(byte [])
+				  constructor should probably raise an exception if the input
+				  is too long, rather than silently truncating. 
+	* Bug #100208 It is possible for WaitForPutDrain to go into an endless loop
+				  rather than throwing an exception when the buffer hasn't been
+				  drained correctly.
+	* Bug #100231 Fix ccndc delete command to correctly remove prefix 
+				  registration rather than attempting to destroy a face.
+	* Bug #100240 Java library missing some forwarding flag definitions
+	* Bug #100244 CCNNetworkManager code should log using FAC_NETMANAGER 
+				  facility
+	* Bug #100252 Reduce number of writing threads in network manager
+
+Changes between 0.1.2 and 0.2.0:
+--------------------------------
+  NOTE: 0.2.0 introduces some changes to the core CCNx protocol, most notably
+   a change in the definition of ephemeral digests.
+
+  * The implicit digest component used as the last component in the
+	name of a ContentObject, used in Links and Exclude filters, 
+	now use the digest of the entire encoded ContentObject, rather than 
+	merely the digest of the CO's content field. This allows exclusion of inadvertent or
+	malicious traffic with the same name and content but different signing information
+	from the intended traffic. Described in doc/technical/DigestComponent.txt
+  * Removed dependency on javax.xml.streams. Replaced with stream-based XML Pull
+	parser as implemented in the kXML library (http://kxml.sourceforge.net/). 
+	This removes the JDK 1.5-specific requirement for JSR 173 jars; JDK 1.5 users
+	can delete jsr173.jar and jsr173_ri.jar from their lib directories.
+  * Repositories now have their own key pairs, rather than using the user's default
+	key. This will enable policy-related communication with the repo and more
+	sophisticated, multi-repository name enumeration protocols.
+  * Implementation of the registration protocol, which allows clients to register
+	with ccnd the prefixes for Interests they wish to receive, is well under way
+	(see issues #100071, #100072, #100073). Until this code is stable, we will
+	retain the default Interest flooding behavior. 
+  * Initial version of Java-based registration control client, ccndcontrol, analogous
+	to ccndc.
+  * Added new ccnFileProxy application, and start script bin/ccnfileproxy; this
+	proxies a specified portion of local file space to CCNx. Note that the proxy currently
+	does not respect access controls, and will make all files it can read available.
+  * Logging cleanups and improvements throughout.
+  * Bump CCN_API_VERSION to 2000.
+  * Make a more palatable C API for signing content objects; see ccn_sign_content(...).
+  * Fix -v handling for ccnputfile.
+  * Remove troublesome uses of $$ in csrc/tests/test_* (Bug #100076)
+  * Fix ccn_initkeystore.sh to not rely on $USER. Use the id command instead.
+  * Start to make configuration settings more robust to platform variations; improved
+	options for controlling KEYSTORE_DIRECTORY, CCN_DIR and username.
+  * Fix ccnd to verify the signatures in face management and registration requests.
+  * Added a C library mechanism for obtaining ccndid, needed by self-registration.
+  * Allow ccndsmoketest to send zero-length datagrams if so instructed.
+  * Remove unused ccn_signed_info_create_default() from API.
+  * Add vlc parameters to control:
+		ccn-fifo-maxblocks -- the maximum number of blocks held in the FIFO
+		ccn-fifo-blocksize -- the size of blocks queued in the FIFO
+  * Improved vlc plugin to use data prefetching, and attempt reconnection when
+	  disconnected from ccnd.
+  * Make the XML jar file a property so it can be overriden on the command 
+	line if using different library.
+  * Cleanup, bug fixes and additional tests for access control code.
+  * Many small bugfixes to address issues with tests.
+  * Issues Resolved:
+	* Feature #100010 Change implicit digest component
+	* Bug #100012 java ContentObject code calculates digest on content only
+	* Bug #100020 repo policy files should be able to span multiple ContentObjects
+	* Bug #100022 hashtb.c needs the delayed finalization case to be implemented
+		  Was included in 0.1.2.
+	* Bug #100031 ccnd should check for AF_UNIX
+	* Bug #100034 CCNWriter doesn't take preexisting Interests
+	* Bug #100048 perror calls in ccnd should use ccnd_msg instead
+	* Bug #100050 Refactor ccnd for improved flexibility in file locations and logging
+			Added CCN_LOCAL_SOCKNAME and CCND_KEYSTORE_DIRECTORY variables.
+	* Feature #100050 Refactor ccnd for improved flexibility in file locations and logging
+	* Feature #100053 remove dependency on javax.xml streams
+	* Feature #100054 repository needs its own keys
+	* Feature #100066 unsolicited content should not cause ccnd to toss good content
+	* Feature #100067 Refactor ccnd keystore directory
+	* Feature #100068 Implement destroyface in ccnd
+	* Feature #100069 make ccndstart.sh less chatty
+	* Feature #100071 Self-registration protocol in ccnd
+	* Bug #100076 Use of $$ in csrc/tests/test-* considered harmful
+	* Bug #100077 Please write some more code here (reduced debugging output)
+	* Bug #100079 ccnputfile does not write any segments for zero-length files
+	* Bug #100083 ccnd not listening to both ipv4 and ipv6 tcp addresses on Linux
+
+	Known issues:
+	* intermittent Java test failures, usually around failure to retrieve
+	  segments; there is work in process that we expect will
+	  fix most of these
+	* intermittent failures of the C test test_destroyface
+	* intermittent JVM crashes on Java 1.5 on OSX Leopard
+	* the default ant/jUnit on Solaris 11 doesn't work; you need to
+	  copy over the ant-junit.jar from /usr/grails/1.0.3/ant/lib/ant-junit.jar
+	  to /usr/share/lib/ant/ant-junit.jar
+
+Changes between 0.1.1 and 0.1.2:
+--------------------------------
+  NOTE: ccnChat will not inter-operate with older versions due to fix for #100030.
+  * Changes to crypto implementation for compatibility with older versions of
+	BouncyCastle and configurations with varied crypto support. Also improved
+	handling of crypto providers.
+  * Added stopall argument to ccn_repo command to stop all running repos on
+	machine.
+  * Turned off ccnd message about heartbeats by default (use CCND_DEBUG=128 to
+	get these messages back).
+  * Fixed ccnput to allow name components after the version marker, generate 
+	FinalBlockID where appropriate.
+  * Added support for file segmentation convention to ccncatchunks2.
+  * Centralized timeout definitions in Java library to SystemConfiguration.
+  * Improved VLC plugin, incl. using name "ccnx", supporting versioned files.
+  * Small improvements to ContentExplorer such as option to save a
+	file to filesystem.
+  * Enlarged time scale for C test_scale to reduce chance of spurious failure.
+  * Added scripts for running experiments with content distribution.
+  * Handle null return from readLine for binary decoding in Java library
+	(#100025).
+  * Improvements to CCNFilterListener support in Java library (#100027).
+  * Improvements to repo performance (#100017)
+  * Issues Resolved:
+	* Bug #100009 Repository makes duplicate data requests.
+	* Bug #100014 Update code to use IANA allocated port.
+		  Replaced temporary port number with registered ccnx port
+				  number 9695. See http://www.iana.org/assignments/port-numbers
+	* Bug #100015 ccndc only processes last command in config file.
+	* Bug #100016 Repo should not process each piece of content as a
+				  potential policy update.
+	* Bug #100019 Incorrect marker byte used for enumeration, repo protocols.
+	* Bug #100021 Repo should have a simple way to specify prefix on startup.
+	* Bug #100023 c tests minsuffix and contenthash failing.
+	* Bug #100024 BasicKeyManager passes null to generateConfigurationException.
+	* Bug #100030 ccnChat/default network string shouldn't use Java 
+				  serialization. Converted Java CCNStringObject to use UTF-8
+				  string encoding.
+	* Bug #100039 ccn.h should have an API version identifier.
+  * Introduce Java ContentEncodingException and use IOException rather than
+	using XMLStreamException widely.
+  * Bug fixes and additional tests for AccessControlManager.
+  * Bug fixes for name enumeration.
+  * Improvement of internal state handling in BloomFilter.java.
+  * Adjustments to logging level of some Java tests.
+  * Reorganization of some Java tests to help track down intermittent failures.
+  * ContentExplorer checks for presence of VLC plugin.
+  * Bug fixes for Java test CCNNetworkObjectTestRepo.
+  * Build fixes for Mac OS X 10.6
+  * Added optimization for Java network objects based on immutable values.
+  * Fixed broken parameter check in ccndc.
+  * Merged specifications of infinite timeout values for Java API.
+  * Improvements to Java CCNFlowControl and creation of simple in-memory server
+	to serve keys.
+  * Improved exception handling for Java network objects.
+  * Cleaned up XML handling for repo policy files.
+  * Added new support for local repo write unit tests.
+  * Eliminated timersub from signbenchtest.c for portability.
+  * Improved interest reexpression in Java library.
+  * Minor refinements to Java log messages.
+  * Revisions to Java documentation.
+  * Minor improvements to C library.
+
+Changes between 0.1.0 and 0.1.1:
+--------------------------------
+
+  * Fixed timing window bug in RepositoryFlowControl affecting repository writing.
+  * Minor improvements to logging in Java library.
+  * Minor changes in build/packaging, Java import list.
+  * Fixed varargs handling in C library for C99 compliance and to fix operation on
+	FreeBSD/amd64.
+  * Auto-generated documentation has been improved, particularly in some Java classes.
+  * ccncatchunks2 now produces a summary output.
+  * org.ccnx.ccn.profiles.access.AccessControlProfile.principalInfoToNameComponent now
+	takes a PrincipalInfo object as input rather than individual values from such object.
+  * The logging level for the Java end-to-end test has been increased to help track down
+	intermittent bugs.
+  * Bugs have been fixed in org.ccnx.ccn.test.io.content.CCNNetworkObjectTest, 
+	CCNNetworkObjectTestRepo.
+  * ccnls now prints a usage message if not given useful input (#100004).
+  * Java ContentName now has additional convenience constructor.
+  * New naming structure for test data has been introduced to use test-specific, timestamped
+	names for unit tests.  This is not yet fully implemented in test suite.
+  * Java Eclipse project name is now CCNx-Java, and the README now explains how to import
+	the Eclipse projects from files in the distribution to get the cross-references.
+  * The BinaryEncoding and SignatureGeneration technical documentation has been slightly 
+	repaired.
+  * Java lib CCNAbstractInputStream now decrypts content objects as a unit, improving
+	random access performance for streams without significant security penalty. (#100007).
+  * ContentExplorer now handles errors better and has fewer blocking threads and new UI 
+	menu options that are not fully implemented.
+
+Version 0.1.0:
+--------------
+
+Initial public release.
