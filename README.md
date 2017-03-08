@@ -67,7 +67,7 @@ libvlc-dev
 
 2) Install CCNx on each node:
 cd
-git clone https://github.com/ProjectCCNx/ccnx.git
+git clone https://github.com/manveers96/CCN-Content-Centric-Networking-
 cd ccnx
 ./configure
 make
